@@ -1,0 +1,12 @@
+xqmvc-0.1.2
+- implemented i18n engine as a plugin
+- created formlink function, to handle get-requests from forms
+- url rewriter now includes plugin in the url: home.com/plugin/cont/func.html
+
+xqmvc-0.1.1
+- link function refactored, no longer ends links with "&" or "?"
+- bugfix: couple of views in user manager demo had import issue
+- config's debug variable now defaults to false
+
+xqmvc-0.1.0
+- initial release to 4.1 EA list
