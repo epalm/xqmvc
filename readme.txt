@@ -1,1 +1,1 @@
-http://spotdocs.scholarsportal.info/display/MarkLogic/XQMVC
+http://code.google.com/p/xqmvc
