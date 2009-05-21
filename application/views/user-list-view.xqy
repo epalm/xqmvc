@@ -1,5 +1,6 @@
 xquery version "1.0-ml";
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../system/xqmvc.xqy";
+import module namespace user = "http://user.manager.com" at "../models/user-model.xqy";
 declare variable $data as map:map external;
 
 <div>
@@ -13,7 +14,7 @@ declare variable $data as map:map external;
 			<th>Created</th>
 		</tr>
 		{
-			for $user in map:get($data, 'users')/user
+			for $user in user:list()
 			order by $user/last-name
 			return
 				<tr>

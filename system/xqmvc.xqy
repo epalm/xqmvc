@@ -143,13 +143,7 @@ as item()*
 declare function _template($template-file as xs:string, $pairs as item()*)
 as item()*
 {
-	xdmp:invoke($template-file,
-		(xs:QName("data"), sequence-to-map($pairs)),
-		<options xmlns="xdmp:eval">
-			<isolation>different-transaction</isolation>
-			<prevent-deadlocks>true</prevent-deadlocks>
-		</options>
-	)
+	_view($template-file, $pairs)
 };
 
 declare function template($template as xs:string, $pairs as item()*)
@@ -192,6 +186,8 @@ as item()*
  : Generates a URL string pointing to the specified controller / function, for 
  : use in href= and action= attributes of html anchors and forms.  This function
  : should be used exclusively within a webapp when linking to internal pages.
+ :
+ : Note: Use _formlink for forms with method="get".
  : 
  : Optionally accepts a sequence of paired items to append as a query string.  
  : This sequence must contain an even number of items.
@@ -256,6 +252,11 @@ as xs:string
 	plugin-link($plugin, $controller, $function, ())
 };
 
+(:~
+ : Generates depending on whether the app uses URL Rewriting or not, either an 
+ : action attribute, or a set of hidden <input> elements, for forms with 
+ : method="get" 
+ :)
 declare function _formlink($plugin as xs:string?, $controller as xs:string,
 	$function as xs:string)
 as item()*
@@ -333,8 +334,7 @@ as xs:string
 };
 
 (:~
- : Generates a sequence of paired items based on a querystring.  The given
- : sequence must contain an even number of items.
+ : Generates a sequence of paired items based on a querystring.
  :
  : Ex: querystring-split('x=123&y=546') will produce ('x', '123', 'y', '456')
  :)

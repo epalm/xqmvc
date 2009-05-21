@@ -4,13 +4,13 @@ declare variable $data as map:map external;
 
 <div>
 	<p>
-		<a href="http://spotdocs.scholarsportal.info/display/MarkLogic/XQMVC">
+		<a href="http://code.google.com/p/xqmvc">
 			Website / Documentation
 		</a>
 	</p>
 	<table>
 		<tr>
-			<td>Time:</td><td>{ xdmp:strftime("%a %d %b %Y %I:%M%P", xs:dateTime(map:get($data, 'time'))) }</td>
+			<td>Time:</td><td>{ xdmp:strftime("%a %d %b %Y %I:%M %p", xs:dateTime(map:get($data, 'time'))) }</td>
 		</tr>
 		<tr>
 			<td>Architecture:</td><td>{ map:get($data, 'arch') }</td>

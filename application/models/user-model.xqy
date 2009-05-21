@@ -15,11 +15,9 @@ declare function db-create()
 	else ()
 };
 
-declare function list() as element(users)
+declare function list() as element(user)*
 {
-	if (fn:not(db-exists())) then ()
-	else
-		fn:doc($db)/users
+	fn:doc($db)/users/user
 };
 
 declare function create($email as xs:string, $first-name as xs:string, 

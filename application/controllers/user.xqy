@@ -18,9 +18,7 @@ as item()*
 	else
 		xqmvc:template('master-template', (
 			'browsertitle', 'User Manager',
-			'body', xqmvc:view('user-list', (
-				'users', user:list()
-			))
+			'body', xqmvc:view('user-list-view')
 		))
 };
 
@@ -41,7 +39,7 @@ as item()*
 						'browsertitle', fn:concat('User Manager - ', 
 							$user/first-name/text(), ' ', 
 							$user/last-name/text()),
-						'body', xqmvc:view('user-view', (
+						'body', xqmvc:view('user-edit-view', (
 							'user', $user
 						))
 					))
