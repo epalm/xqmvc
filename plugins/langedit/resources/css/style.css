@@ -1,5 +1,5 @@
 body, input, button, textarea, select, option {
-	font-family: 'courier new'; font-size: 12px;
+    font-family: 'courier new'; font-size: 12px;
 }
 
 form, div { margin: 0; }

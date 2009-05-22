@@ -3,7 +3,7 @@ xquery version "1.0-ml";
 (:
  : Copyright 2009 Ontario Council of University Libraries
  : 
- : Licensed under the Apache License, Version 2.0 (the "License");
+ : Licensed     under the Apache License, Version 2.0 (the "License");
  : you may not use this file except in compliance with the License.
  : You may obtain a copy of the License at
  : 
@@ -28,38 +28,38 @@ import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "xqmv
 
 let $url := xdmp:get-request-url()
 return
-	if (matches($url, concat("^", $xqmvc:resource-dir)) 
-			or matches($url, concat("^", $xqmvc:library-dir))) then
-		$url
-	else
-		let $suffix := replace($xqmvc-conf:url-suffix, '\.', '\\.')
-		let $standard-pattern := concat("^", $xqmvc-conf:app-root, "/([\w\.-]+)/([\w\.-]*)", $suffix, "((\?)(.*))?$")
-		let $plugin-pattern := concat("^", $xqmvc-conf:app-root, "/([\w\.-]+)/([\w\.-]+)/([\w\.-]*)", $suffix, "((\?)(.*))?$")
-		return
-		
-			(: standard url rewriting :)
-			if (matches($url, $standard-pattern)) then
-				
-				let $from := $standard-pattern
-				let $to := concat($xqmvc-conf:app-root, "/?",
-					$xqmvc-conf:controller-querystring-field, "=$1&amp;",
-					$xqmvc-conf:function-querystring-field, "=$2&amp;",
-					"$5")
-				let $new := replace($url, $from, $to)
-				return
-					$new
-					
-			(: plugin url rewriting :)
-			else if (matches($url, $plugin-pattern)) then
-				
-				let $from := $plugin-pattern
-				let $to := concat($xqmvc-conf:app-root, "/?",
-					$xqmvc-conf:controller-querystring-field, "=$2&amp;",
-					$xqmvc-conf:function-querystring-field, "=$3&amp;",
-					$xqmvc-conf:plugin-querystring-field, "=$1&amp;",
-					"$6")
-				let $new := replace($url, $from, $to)
-				return
-					$new
-			else
-				$url
+if (matches($url, concat("^", $xqmvc:resource-dir)) 
+            or matches($url, concat("^", $xqmvc:library-dir))) then
+        $url
+    else
+        let $suffix := replace($xqmvc-conf:url-suffix, '\.', '\\.')
+        let $standard-pattern := concat("^", $xqmvc-conf:app-root, "/([\w\.-]+)/([\w\.-]*)", $suffix, "((\?)(.*))?$")
+        let $plugin-pattern := concat("^", $xqmvc-conf:app-root, "/([\w\.-]+)/([\w\.-]+)/([\w\.-]*)", $suffix, "((\?)(.*))?$")
+        return
+        
+            (: standard url rewriting :)
+            if (matches($url, $standard-pattern)) then
+                
+                let $from := $standard-pattern
+                let $to := concat($xqmvc-conf:app-root, "/?",
+                    $xqmvc-conf:controller-querystring-field, "=$1&amp;",
+                    $xqmvc-conf:function-querystring-field, "=$2&amp;",
+                    "$5")
+                let $new := replace($url, $from, $to)
+                return
+                    $new
+                    
+            (: plugin url rewriting :)
+            else if (matches($url, $plugin-pattern)) then
+                
+                let $from := $plugin-pattern
+                let $to := concat($xqmvc-conf:app-root, "/?",
+                    $xqmvc-conf:controller-querystring-field, "=$2&amp;",
+                    $xqmvc-conf:function-querystring-field, "=$3&amp;",
+                    $xqmvc-conf:plugin-querystring-field, "=$1&amp;",
+                    "$6")
+                let $new := replace($url, $from, $to)
+                return
+                    $new
+            else
+                $url

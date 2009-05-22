@@ -3,10 +3,10 @@ import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../.
 declare variable $data as map:map external;
 
 <div>
-	<p>Couldn't find document [{ map:get($data, 'db') }]</p>
-	<form action="{ xqmvc:link('user', 'db-create') }" method="post">
-		<p>
-			<input type="submit" value="Create [{ map:get($data, 'db') }]"/>
-		</p>
-	</form>
+    <p>Couldn't find document [{ map:get($data, 'db') }]</p>
+    <form action="{ xqmvc:link('user', 'db-create') }" method="post">
+        <p>
+            <input type="submit" value="Create [{ map:get($data, 'db') }]"/>
+        </p>
+    </form>
 </div>

@@ -28,7 +28,7 @@ let $function := xqmvc:current-function()
 let $plugin := xqmvc:current-plugin()
 let $log := if ($xqmvc-conf:debug) then xqmvc:log-status() else ()
 return
-	if ($plugin) then
-		xqmvc:plugin-controller($plugin, $controller, $function)
-	else
-		xqmvc:controller($controller, $function)
+    if ($plugin) then
+        xqmvc:plugin-controller($plugin, $controller, $function)
+    else
+        xqmvc:controller($controller, $function)
