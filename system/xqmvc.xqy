@@ -34,12 +34,20 @@ declare variable $plugin-resource-dir as xs:string := fn:concat($xqmvc-conf:app-
 declare variable $library-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/libraries');
 declare variable $plugin-library-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins/', current-plugin(), '/libraries');
 
+declare variable $doctype-html-4.01-strict :=       '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
+declare variable $doctype-html-4.01-transitional := '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+declare variable $doctype-html-4.01-frameset :=     '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">';
+declare variable $doctype-xhtml-1.0-strict :=       '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+declare variable $doctype-xhtml-1.0-transitional := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+declare variable $doctype-xhtml-1.0-frameset :=     '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">';
+declare variable $doctype-xhtml-1.1 :=              '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
+
 (:~
  : Loads a controller, and executes a zero-argument function within that 
  : controller.
  :)
 declare function _controller($controller-file as xs:string,
-$function as xs:string)
+    $function as xs:string)
 as item()*
 {
     if (fn:starts-with($function, '_')) then
