@@ -72,40 +72,16 @@ as xs:string
     this:text($key, ())
 };
 
-(:~
- : Retrieves text from a language file, as an element(span).
- :
- : Tokens work the same as this:text(...)
- :
- : The text will be xdmp:unquote'd, meaning, for example, phrases with 
- : <b>bold</b> tags will be properly displayed in a browser.  YOU MUST ENSURE
- : THAT THE PHRASE CONTAINS VALID XML, IF ANY, otherwise all bets are off.
- :
- : @param $key The text key.
- : @param [$tokens] Tokens to substitute into the phrase.
- : @param [$lang] The lang to use.  If not present, will attempt to use
- :         $SESS-VAR, followed by $DEFAULT-LANG in lang-custom.xqy.
- : @return A string wrapped in (html) span tags.
- :)
-declare function this:html($key as xs:string, $tokens as xs:string*, 
-    $lang as xs:string)
-as element(span)
+declare function this:path($lang as xs:string)
+as xs:string
 {
-    let $path := this:path($lang)
-    return
-        if (not(doc-available($path))) then
-            <span>lang file [{ $path }] not found</span>
-        else
-            let $value := this:value($path, $key)
-            let $value :=
-                if ($value) then
-                    this:html-substitution($value, $tokens)/node()
-                else ()
-            return
-                <span>{
-                    if ($value) then $value
-                    else concat('[', $key, ']')
-                }</span>
+    concat($cfg:storage-dir, '/', $cfg:file-prefix, $lang, '.xml')
+};
+
+declare function this:value($path as xs:string, $key as xs:string)
+as element(le:value)?
+{
+    doc($path)/le:lang/le:value[@key eq $key]
 };
 
 declare function this:html($key as xs:string, $tokens as xs:string*)
@@ -121,44 +97,86 @@ as element(span)
     this:html($key, ())
 };
 
-declare function this:path($lang as xs:string)
-as xs:string
+(:~
+ : Retrieves text from a language file, as an element(span).
+ :
+ : Tokens work the same as this:text(...)
+ :
+ : The text will be xdmp:unquote'd, meaning, for example, phrases with 
+ : <b>bold</b> tags will be properly displayed in a browser.  YOU MUST ENSURE
+ : THAT THE PHRASE CONTAINS VALID XML, IF ANY, otherwise all bets are off.
+ :
+ : @param $key The text key.
+ : @param [$tokens] Tokens to substitute into the phrase.
+ : @param [$lang] The lang to use.  If not present, will attempt to use
+ :         $SESS-VAR, followed by $DEFAULT-LANG in lang-custom.xqy.
+ : @return A string wrapped in (html) span tags.
+ : 
+ : RFD: june 01,2010:
+ : Modified in response to issue#3 
+ :)
+declare function this:html($key as xs:string, $tokens as xs:string*, $lang as xs:string)
+as element(span)
 {
-    concat($cfg:storage-dir, '/', $cfg:file-prefix, $lang, '.xml')
-};
-
-declare function this:value($path as xs:string, $key as xs:string)
-as element(le:value)?
-{
-    doc($path)/le:lang/le:value[@key eq $key]
-};
-
-declare function this:html-substitution($value as element(), 
-    $tokens as xs:string*)
-as node()*
-{
-    if (fn:not($value/node())) then
-        $value
+   let $path := this:path($lang)
+    return
+    if (not(doc-available($path))) then
+            <span>lang file [{ $path }] not found</span>
     else
-        let $value := 
-            element { fn:node-name($value) } {
-                $value/@*, xdmp:unquote($value/node(), "", "repair-full")
-            }
-        let $output := ()
-        let $work :=
-            for $node in $value/node()
-            return
-                if (xdmp:node-kind($node) eq 'text') then
-                    let $text := fn:string($node)
-                    let $substitutions := 
-                        for $token at $i in $tokens
-                        return
-                            xdmp:set($text, fn:replace($text, fn:concat('\[', 
-                                $i, '\]'), $token))
-                    return xdmp:set($output, ($output, text { $text } ))
-                else
-                    xdmp:set($output, ($output, this:html-substitution($node, 
-                        $tokens)))
-        return
-            element { fn:node-name($value) } { $value/@*, $output }
+         let $value := this:value($path, $key)
+         let $value :=
+             if ($value) then
+                 if (fn:not($value/node())) then
+                        $value
+                 else
+                        let $value := 
+                                element { fn:node-name($value) } {
+                                    $value/@*, xdmp:unquote($value/node(), "", "repair-full")
+                                }
+                 return if(fn:empty($tokens)) then $value else this:accept($value,$tokens)
+             else ()
+         
+         return
+                <span>{
+                    if ($value) then $value
+                    else concat('[', $key, ']')
+                }</span>
+};
+
+ (:~
+  : @param $x  A node.
+  : @param [$tokens] A sequence of Strings ( order matters )
+  :
+  :  Double dispatch recursive functions that Perform a Depth First Search
+  :  on the given $x node. While doing the DFS, variables that might exist in node's
+  :  text-children will be replaced with the strings that are specified in the $tokens.
+  :
+  :  Note1: The variables are numbers [1],[2], etc... implying the order of
+  :  the strings in the $tokens*.
+  : 
+  :  Note2: The scope of the varaibles are over the whole tree
+  :  and they can only appear in the $text nodes
+  :
+  :)
+declare function this:visit($x as node(),$tokens as xs:string*) as node()*
+{
+   for $z in $x/node() return this:accept($z,$tokens)       
+};
+
+declare function this:accept($x as node(),$tokens as xs:string*) as node()*
+{
+    typeswitch ($x)
+        case text() return text { this:sub_var($tokens, fn:string($x)) }
+        case element() return element { fn:node-name($x)} {$x/@*, this:visit($x,$tokens) }                    
+        default return this:visit($x,$tokens)
+};
+
+declare function this:sub_var($tokens as xs:string*,$text)
+{
+    let $dosub := 
+            for $token at $i in $tokens
+                return
+                    xdmp:set($text, fn:replace($text, fn:concat('\[', $i, '\]'), $token))
+    
+    return $text 
 };
