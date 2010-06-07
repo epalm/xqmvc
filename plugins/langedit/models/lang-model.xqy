@@ -112,52 +112,55 @@ as element(span)
  :         $SESS-VAR, followed by $DEFAULT-LANG in lang-custom.xqy.
  : @return A string wrapped in (html) span tags.
  : 
- : RFD: june 01,2010:
+ : RFD: 2010-06-02:
  : Modified in response to issue#3 
  :)
-declare function this:html($key as xs:string, $tokens as xs:string*, $lang as xs:string)
+declare function this:html($key as xs:string, $tokens as xs:string*,
+    $lang as xs:string)
 as element(span)
 {
-   let $path := this:path($lang)
+    let $path := this:path($lang)
     return
-    if (not(doc-available($path))) then
+        if (not(doc-available($path))) then
             <span>lang file [{ $path }] not found</span>
-    else
-         let $value := this:value($path, $key)
-         let $value :=
-             if ($value) then
-                 if (fn:not($value/node())) then
+        else
+            let $value := this:value($path, $key)
+            let $value :=
+                if ($value) then
+                    if (not($value/node())) then
                         $value
-                 else
+                    else
                         let $value := 
-                                element { fn:node-name($value) } {
-                                    $value/@*, xdmp:unquote($value/node(), "", "repair-full")
-                                }
-                 return if(fn:empty($tokens)) then $value else this:accept($value,$tokens)
-             else ()
-         
-         return
+                            element { node-name($value) } {
+                                $value/@*, xdmp:unquote($value/node(), "",
+                                        "repair-full")
+                            }
+                        return
+                            if (empty($tokens)) then $value
+                            else this:accept($value, $tokens)
+                else ()
+            return
                 <span>{
                     if ($value) then $value
                     else concat('[', $key, ']')
                 }</span>
 };
 
- (:~
-  : @param $x  A node.
-  : @param [$tokens] A sequence of Strings ( order matters )
-  :
-  :  Double dispatch recursive functions that Perform a Depth First Search
-  :  on the given $x node. While doing the DFS, variables that might exist in node's
-  :  text-children will be replaced with the strings that are specified in the $tokens.
-  :
-  :  Note1: The variables are numbers [1],[2], etc... implying the order of
-  :  the strings in the $tokens*.
-  : 
-  :  Note2: The scope of the varaibles are over the whole tree
-  :  and they can only appear in the $text nodes
-  :
-  :)
+(:~
+ : @param $x  A node.
+ : @param [$tokens] A sequence of Strings ( order matters )
+ :
+ : Double dispatch recursive functions that Perform a Depth First Search
+ : on the given $x node. While doing the DFS, variables that might exist in node's
+ : text-children will be replaced with the strings that are specified in the $tokens.
+ : 
+ : Note1: The variables are numbers [1],[2], etc... implying the order of
+ : the strings in the $tokens*.
+ : 
+ : Note2: The scope of the varaibles are over the whole tree
+ : and they can only appear in the $text nodes
+ : 
+ :)
 declare function this:visit($x as node(),$tokens as xs:string*) as node()*
 {
    for $z in $x/node() return this:accept($z,$tokens)       
