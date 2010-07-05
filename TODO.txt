@@ -1,0 +1,7 @@
+
+0) Need to replace xdmp:set with some implementation agnostic code
+SEE -  plugins/langedit/models/lang-model.xqy
+
+1) Remove passing map:map type to the view. Its MarkLogic specific, needs to be abstracted out. This is used in views, templates and xqmvc.xqy
+
+2) Consider URL-Rewritting, works for MarkLogic, will probably need to be changed for eXist-db and abstracted out. see xqmvc.xqy link() functions
