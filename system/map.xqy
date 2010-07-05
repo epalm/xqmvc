@@ -48,7 +48,7 @@ as element(map)
 declare function get($map as element(map), $key as xs:string)
 as item()*
 {
-    $map/entry[@key eq 'two']/value/node()
+    $map/entry[@key eq $key]/value/node()
 };
 
 declare function contains-key($map as element(map), $key as xs:string)
