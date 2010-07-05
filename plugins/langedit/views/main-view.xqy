@@ -1,7 +1,9 @@
-xquery version "1.0-ml";
+xquery version "1.0";
+
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../../system/xqmvc.xqy";
 import module namespace cfg = "http://scholarsportal.info/xqmvc/langedit/config" at "../config/config.xqy";
 import module namespace editor = "http://scholarsportal.info/xqmvc/langedit/m/editor" at "../models/editor-model.xqy";
+
 declare variable $data as map:map external;
 
 declare variable $INPUT-EMPTY-SIZE as xs:integer := 50;

@@ -1,4 +1,4 @@
-xquery version "1.0-ml";
+xquery version "1.0";
 
 (:
  : Copyright 2009 Ontario Council of University Libraries
@@ -18,6 +18,7 @@ xquery version "1.0-ml";
 
 module namespace xqmvc-controller = "http://scholarsportal.info/xqmvc/controller";
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../../system/xqmvc.xqy";
+import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../../system/processor/processor.xqy";
 
 import module namespace cfg = "http://scholarsportal.info/xqmvc/langedit/config" at "../config/config.xqy";
 import module namespace lang = "http://scholarsportal.info/xqmvc/langedit/m/lang" at "../models/lang-model.xqy";
@@ -25,8 +26,8 @@ import module namespace editor = "http://scholarsportal.info/xqmvc/langedit/m/ed
 
 declare function index()
 {
-    let $lang := xdmp:get-request-field('lang', '')
-    let $filter := xdmp:get-request-field('filter', '')
+    let $lang := processor:http-request-param('lang', '')
+    let $filter := processor:http-request-param('filter', '')
     let $path := lang:path($lang)
     return
         xqmvc:plugin-template($cfg:plugin-name, 'master-template', (
@@ -61,7 +62,7 @@ declare function _not-found($lang as xs:string?)
 
 declare function lang-create()
 {
-    let $lang := xdmp:get-request-field('lang')
+    let $lang := processor:http-request-param('lang')
     return (
         editor:lang-create($lang),
         xqmvc:redirect(xqmvc:plugin-link($cfg:plugin-name, 'editor', 'index', 
@@ -71,7 +72,7 @@ declare function lang-create()
 
 declare function lang-delete()
 {
-    let $lang := xdmp:get-request-field('lang')
+    let $lang := processor:http-request-param('lang')
     return (
         editor:lang-delete($lang),
         xqmvc:redirect(xqmvc:plugin-link($cfg:plugin-name, 'editor', 'index'))
@@ -80,16 +81,16 @@ declare function lang-delete()
 
 declare function value-save-all()
 {
-    let $lang := xdmp:get-request-field('lang')
-    let $filter := xdmp:get-request-field('filter')
+    let $lang := processor:http-request-param('lang')
+    let $filter := processor:http-request-param('filter')
     return (
     
-        for $field in xdmp:get-request-field-names()
+        for $field in processor:http-request-param-names()
         return
             if (fn:starts-with($field, '__key__')) then
                 let $id := fn:substring-after($field, '__key__')
-                let $key := xdmp:get-request-field($field)
-                let $text := xdmp:get-request-field(fn:concat('__text__', $id))
+                let $key := processor:http-request-param($field)
+                let $text := processor:http-request-param(fn:concat('__text__', $id))
                 return
                     editor:value-update($lang, $id, $key, $text)
             else ()
@@ -101,9 +102,9 @@ declare function value-save-all()
 
 declare function value-create()
 {
-    let $lang := xdmp:get-request-field('lang')
-    let $filter := xdmp:get-request-field('filter')
-    let $key := xdmp:get-request-field('key')
+    let $lang := processor:http-request-param('lang')
+    let $filter := xprocessor:http-request-param('filter')
+    let $key := processor:http-request-param('key')
     return (
         editor:value-create($key),
         xqmvc:redirect(xqmvc:plugin-link($cfg:plugin-name, 'editor', 'index', 
@@ -113,8 +114,8 @@ declare function value-create()
 
 declare function value-delete()
 {
-    let $lang := xdmp:get-request-field('lang')
-    let $id := xdmp:get-request-field('id')
+    let $lang := processor:http-request-param('lang')
+    let $id := processor:http-request-param('id')
     return (
         editor:value-delete($id),
         xqmvc:redirect(xqmvc:plugin-link($cfg:plugin-name, 'editor', 'index',

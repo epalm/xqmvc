@@ -1,23 +1,25 @@
-xquery version "1.0-ml";
+xquery version "1.0";
 module namespace user = "http://user.manager.com";
+
+import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../system/processor/processor.xqy";
 
 declare variable $db := '/users.xml';
 
 declare function db-exists()
 {
-    fn:doc-available($db) and fn:exists(fn:doc($db)/users)
+    processor:doc-available($db) and fn:exists(processor:doc($db)/users)
 };
 
 declare function db-create()
 {
     if (fn:not(db-exists())) then
-        xdmp:document-insert($db, <users/>)
+        processor:store($db, <users/>)
     else ()
 };
 
 declare function list() as element(user)*
 {
-    fn:doc($db)/users/user
+    processor:doc($db)/users/user
 };
 
 declare function create($email as xs:string, $first-name as xs:string, 
@@ -26,21 +28,21 @@ declare function create($email as xs:string, $first-name as xs:string,
     if (fn:not(db-exists())) then ()
     else
         let $user :=
-            <user id="{ xdmp:random() }">
+            <user id="{ processor:random() }">
                 <email edit="yes">{ $email }</email>
                 <first-name edit="yes">{ $first-name }</first-name>
                 <last-name edit="yes">{ $last-name }</last-name>
                 <created>{ fn:current-dateTime() }</created>
             </user>
         return
-            xdmp:node-insert-child(fn:doc($db)/users, $user)
+            processor:node-insert-child(processor:doc($db)/users, $user)
 };
 
 declare function get($id as xs:string)
 {
     if (fn:not(db-exists())) then ()
     else
-        fn:doc($db)/users/user[@id eq $id]
+        processor:doc($db)/users/user[@id eq $id]
 };
 
 declare function exists($id as xs:string)
@@ -56,9 +58,9 @@ declare function save($id as xs:string, $email as xs:string,
     else
         if (fn:not(exists($id))) then ()
         else (
-            xdmp:node-replace(fn:doc($db)/users/user[@id eq $id]/email, <email edit="yes">{ $email }</email>),
-            xdmp:node-replace(fn:doc($db)/users/user[@id eq $id]/first-name, <first-name edit="yes">{ $first-name }</first-name>),
-            xdmp:node-replace(fn:doc($db)/users/user[@id eq $id]/last-name, <last-name edit="yes">{ $last-name }</last-name>)
+            processor:node-replace(processor:doc($db)/users/user[@id eq $id]/email, <email edit="yes">{ $email }</email>),
+            processor:node-replace(processor:doc($db)/users/user[@id eq $id]/first-name, <first-name edit="yes">{ $first-name }</first-name>),
+            processor:node-replace(processor:doc($db)/users/user[@id eq $id]/last-name, <last-name edit="yes">{ $last-name }</last-name>)
         )
 };
 
@@ -68,5 +70,5 @@ declare function delete($id as xs:string)
     else
         if (fn:not(exists($id))) then ()
         else
-            xdmp:node-delete(fn:doc($db)/users/user[@id eq $id])
+            processor:node-delete(processor:doc($db)/users/user[@id eq $id])
 };

@@ -1,5 +1,8 @@
-xquery version "1.0-ml";
+xquery version "1.0";
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../system/xqmvc.xqy";
+
+import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../system/processor/processor.xqy";
+
 declare variable $data as map:map external;
 
 <div>
@@ -10,7 +13,7 @@ declare variable $data as map:map external;
     </p>
     <table>
         <tr>
-            <td>Time:</td><td>{ xdmp:strftime("%a %d %b %Y %I:%M %p", xs:dateTime(map:get($data, 'time'))) }</td>
+            <td>Time:</td><td>{ processor:format-dateTime-for-human(xs:dateTime(map:get($data, 'time'))) }</td>
         </tr>
         <tr>
             <td>Architecture:</td><td>{ map:get($data, 'arch') }</td>

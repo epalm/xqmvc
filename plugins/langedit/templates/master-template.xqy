@@ -1,10 +1,13 @@
-xquery version "1.0-ml";
+xquery version "1.0";
+
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../../system/xqmvc.xqy";
+import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../../system/processor/processor.xqy";
+
 declare variable $data as map:map external;
 
-xdmp:set-response-content-type('application/xhtml+xml; charset=utf-8'),
+processor:http-response-content-type('application/xhtml+xml'),
 
-$xqmvc:doctype-xhtml-1.1,
+processor:http-response-set-document-type($xqmvc:doctype-xhtml-1.1),
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>

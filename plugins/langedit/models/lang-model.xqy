@@ -1,4 +1,4 @@
-xquery version "1.0-ml";
+xquery version "1.0";
 
 (:
  : Copyright 2009 Ontario Council of University Libraries
@@ -22,9 +22,9 @@ xquery version "1.0-ml";
 module namespace this = "http://scholarsportal.info/xqmvc/langedit/m/lang";
 
 import module namespace cfg = "http://scholarsportal.info/xqmvc/langedit/config" at "../config/config.xqy";
+import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../../system/processor/processor.xqy";
 
 declare namespace le = "http://scholarsportal.info/xqmvc/langedit";
-declare default function namespace "http://www.w3.org/2005/xpath-functions";
 
 (:~
  : Retrieves text from a language file, as an xs:string.
@@ -47,16 +47,44 @@ as xs:string
 {
     let $path := this:path($lang)
     return
-        if (not(doc-available($path))) then
-            concat('lang file [', $path, '] not found')
+        if (fn:not(processor:doc-available($path))) then
+            fn:concat('lang file [', $path, '] not found')
         else
-            let $value := string(this:value($path, $key))
+            let $value := fn:string(this:value($path, $key))
             let $substitutions :=
                 for $token at $i in $tokens
-                return xdmp:set($value, replace($value, concat('\[', $i, '\]'), 
+                return xdmp:set($value, fn:replace($value, fn:concat('\[', $i, '\]'), 
                     $token))
             return
-                if ($value) then $value else concat('[', $key, ']')
+                if ($value) then $value else fn:concat('[', $key, ']')
+                
+                
+                (: TODO replace use of xdmp:set for substitutions with - :)
+                (:
+                let $new-value := fn:replace(
+                	$value,
+                	fn:concat(
+                		fn:string-join(
+                			for $i in 1 to fn:count($tokens) return
+                				fn:concat("(.*)(\[", $i, "\])")
+                		, ""),
+                		"(.*)"
+                	),
+                	fn:concat(
+                		fn:string-join(
+                			for $i in 1 to fn:count($tokens) return
+                				fn:concat(
+                					if($i gt 1) then(" ") else (""),
+                					"$", (($i * 2) - 1),
+                					" ",
+                					$tokens[$i]
+                				)
+                		, ""),
+                		" $", (((fn:count($tokens) + 1) * 2) - 1)
+                	)
+                )
+                :)
+
 };
 
 declare function this:text($key as xs:string, $tokens as xs:string*)
@@ -75,13 +103,13 @@ as xs:string
 declare function this:path($lang as xs:string)
 as xs:string
 {
-    concat($cfg:storage-dir, '/', $cfg:file-prefix, $lang, '.xml')
+    fn:concat($cfg:storage-dir, '/', $cfg:file-prefix, $lang, '.xml')
 };
 
 declare function this:value($path as xs:string, $key as xs:string)
 as element(le:value)?
 {
-    doc($path)/le:lang/le:value[@key eq $key]
+    processor:doc($path)/le:lang/le:value[@key eq $key]
 };
 
 declare function this:html($key as xs:string, $tokens as xs:string*)
@@ -121,28 +149,27 @@ as element(span)
 {
     let $path := this:path($lang)
     return
-        if (not(doc-available($path))) then
+        if (fn:not(processor:doc-available($path))) then
             <span>lang file [{ $path }] not found</span>
         else
             let $value := this:value($path, $key)
             let $value :=
                 if ($value) then
-                    if (not($value/node())) then
+                    if (fn:not($value/node())) then
                         $value
                     else
                         let $value := 
-                            element { node-name($value) } {
-                                $value/@*, xdmp:unquote($value/node(), "",
-                                        "repair-full")
+                            element { fn:node-name($value) } {
+                                $value/@*, processor:parse-with-fixes($value/node())
                             }
                         return
-                            if (empty($tokens)) then $value
+                            if (fn:empty($tokens)) then $value
                             else this:accept($value, $tokens)
                 else ()
             return
                 <span>{
                     if ($value) then $value
-                    else concat('[', $key, ']')
+                    else fn:concat('[', $key, ']')
                 }</span>
 };
 

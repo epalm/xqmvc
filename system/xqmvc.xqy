@@ -1,4 +1,4 @@
-xquery version "1.0-ml";
+xquery version "1.0";
 
 (:
  : Copyright 2009 Ontario Council of University Libraries
@@ -6,7 +6,7 @@ xquery version "1.0-ml";
  : Licensed     under the Apache License, Version 2.0 (the "License");
  : you may not use this file except in compliance with the License.
  : You may obtain a copy of the License at
- : 
+ : d
  :    http://www.apache.org/licenses/LICENSE-2.0
  : 
  : Unless required by applicable law or agreed to in writing, software
@@ -22,6 +22,7 @@ xquery version "1.0-ml";
  :)
 module namespace xqmvc = "http://scholarsportal.info/xqmvc/core";
 import module namespace xqmvc-conf = "http://scholarsportal.info/xqmvc/config" at "../application/config/config.xqy";
+import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "processor/processor.xqy";
 declare namespace xqmvc-ctrlr = "http://scholarsportal.info/xqmvc/controller";
 
 declare variable $controller-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/controllers');
@@ -53,20 +54,13 @@ as item()*
     if (fn:starts-with($function, '_')) then
         ()
     else
-        let $import-declaration := fn:concat(
-            'import module namespace xqmvc-ctrlr = ',
-            '"http://scholarsportal.info/xqmvc/controller" at ',
-            '"', $controller-file, '";'
-        )
-        let $function-call := fn:concat('xqmvc-ctrlr:', $function, '()')
         return
-            xdmp:eval(fn:concat($import-declaration, $function-call),
-                (),
-                <options xmlns="xdmp:eval">
-                    <isolation>different-transaction</isolation>
-                    <prevent-deadlocks>true</prevent-deadlocks>
-                </options>
-            )
+            processor:execute-module-function(get-namespace-for-prefix("xqmvc-ctrlr"), xs:anyURI($controller-file), $function)
+};
+
+declare function get-namespace-for-prefix($prefix as xs:string) as xs:anyURI?
+{
+    fn:namespace-uri-from-QName(xs:QName(fn:concat($prefix, ":null")))
 };
 
 declare function controller($controller as xs:string, $function as xs:string)
@@ -102,6 +96,8 @@ as item()*
 declare function _view($view-file as xs:string, $pairs as item()*)
 as item()*
 {
+    processor:execute($view-file, $sequence-to-map) (: TODO replace map with element tree :)
+
     xdmp:invoke($view-file,
         (xs:QName("data"), sequence-to-map($pairs)),
         <options xmlns="xdmp:eval">
@@ -322,7 +318,7 @@ as item()*
 declare function redirect($location as xs:string)
 as empty-sequence()
 {
-    xdmp:redirect-response($location)
+    processor:http-response-redirect($location)
 };
 
 (:~
@@ -360,8 +356,7 @@ as xs:string*
 declare function current-controller()
 as xs:string
 {
-    xdmp:get-request-field($xqmvc-conf:controller-querystring-field, 
-        $xqmvc-conf:default-controller)
+    processor:http-request-param($xqmvc-conf:controller-querystring-field, $xqmvc-conf:default-controller)
 };
 
 (:~
@@ -370,7 +365,7 @@ as xs:string
 declare function current-function()
 as xs:string
 {
-    xdmp:get-request-field($xqmvc-conf:function-querystring-field, 'index')
+    processor:http-request-param($xqmvc-conf:function-querystring-field, 'index')
 };
 
 (:~
@@ -379,7 +374,7 @@ as xs:string
 declare function current-plugin()
 as xs:string
 {
-    xdmp:get-request-field($xqmvc-conf:plugin-querystring-field, '')
+    processor:http-request-param($xqmvc-conf:plugin-querystring-field, '')
 };
 
 (:~
@@ -415,10 +410,12 @@ as node()*
  :)
 declare function log-status()
 {
-    xdmp:log(fn:concat(
-        'app-root=[',     $xqmvc-conf:app-root    , '] ',
-        'plugin=[',     current-plugin()        , '] ',
-        'controller=[', current-controller()    , '] ',
-        'function=[',     current-function()        , '] '
-    ))
+    processor:log(
+        fn:concat(
+            'app-root=[',     $xqmvc-conf:app-root    , '] ',
+            'plugin=[',     current-plugin()        , '] ',
+            'controller=[', current-controller()    , '] ',
+            'function=[',     current-function()        , '] '
+        )
+    )
 };

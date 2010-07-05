@@ -1,4 +1,4 @@
-xquery version "1.0-ml";
+xquery version "1.0";
 
 (:
  : Copyright 2009 Ontario Council of University Libraries
@@ -18,6 +18,7 @@ xquery version "1.0-ml";
 
 module namespace xqmvc-controller = "http://scholarsportal.info/xqmvc/controller";
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../system/xqmvc.xqy";
+import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../system/processor/processor.xqy";
 
 import module namespace user = "http://user.manager.com" at "../models/user-model.xqy";
 
@@ -45,7 +46,7 @@ as item()*
     if (fn:not(user:db-exists())) then
         _request-db-creation()
     else
-        let $id := xdmp:get-request-field("id")
+        let $id := processor:http-request-param("id")
         return
             if (fn:not(user:exists($id))) then
                 xqmvc:redirect(xqmvc:link('user', 'list'))
@@ -71,9 +72,9 @@ declare function db-create()
 declare function create()
 as item()*
 {
-    let $email := xdmp:get-request-field("email")
-    let $first-name := xdmp:get-request-field("first-name")
-    let $last-name := xdmp:get-request-field("last-name")
+    let $email := processor:http-request-param("email")
+    let $first-name := processor:http-request-param("first-name")
+    let $last-name := processor:http-request-param("last-name")
     let $work := user:create($email, $first-name, $last-name)
     return xqmvc:redirect(xqmvc:link("user", "list"))
 };
@@ -81,10 +82,10 @@ as item()*
 declare function save()
 as item()*
 {
-    let $id := xdmp:get-request-field("id")
-    let $email := xdmp:get-request-field("email")
-    let $first-name := xdmp:get-request-field("first-name")
-    let $last-name := xdmp:get-request-field("last-name")
+    let $id := processor:http-request-param("id")
+    let $email := processor:http-request-param("email")
+    let $first-name := processor:http-request-param("first-name")
+    let $last-name := processor:http-request-param("last-name")
     let $work := user:save($id, $email, $first-name, $last-name)
     return xqmvc:redirect(xqmvc:link("user", "list"))
 };
@@ -92,7 +93,7 @@ as item()*
 declare function delete()
 as item()*
 {
-    let $id := xdmp:get-request-field("id")
+    let $id := processor:http-request-param("id")
     let $work := user:delete($id)
     return xqmvc:redirect(xqmvc:link("user", "list"))
 };

@@ -1,4 +1,4 @@
-xquery version "1.0-ml";
+xquery version "1.0";
 
 (:
  : Copyright 2009 Ontario Council of University Libraries
@@ -22,9 +22,9 @@ xquery version "1.0-ml";
 module namespace this = "http://scholarsportal.info/xqmvc/langedit/m/editor";
 
 import module namespace cfg = "http://scholarsportal.info/xqmvc/langedit/config" at "../config/config.xqy";
+import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../../system/processor/processor.xqy";
 
 declare namespace le = "http://scholarsportal.info/xqmvc/langedit";
-declare default function namespace "http://www.w3.org/2005/xpath-functions";
 
 declare variable $LANG-CHAR-PATTERN as xs:string := '[A-Za-z0-9\._-]';
 declare variable $KEY-CHAR-PATTERN as xs:string := '[A-Za-z0-9\._-]';
@@ -33,9 +33,9 @@ declare variable $STRIP-CHARS as xs:string* := ('.', ' ');
 declare function this:lang-list()
 as xs:string*
 {
-    for $doc in xdmp:directory(concat($cfg:storage-dir, '/'))
-    let $filename := base-uri($doc)
-    let $lang := replace(tokenize($filename, '/')[last()], "(.*)\.xml", "$1")
+    for $doc in processor:directory(concat($cfg:storage-dir, '/'))
+    let $filename := fn:base-uri($doc)
+    let $lang := fn:replace(fn:tokenize($filename, '/')[last()], "(.*)\.xml", "$1")
     order by $lang
     return $lang
 };
@@ -43,7 +43,7 @@ as xs:string*
 declare function this:lang-exists($lang as xs:string)
 as xs:boolean
 {
-    doc-available(this:path($lang))
+    processor:doc-available(this:path($lang))
 };
 
 declare function this:lang-create($lang as xs:string)
@@ -52,7 +52,7 @@ as empty-sequence()
     let $lang := this:filter(this:strip($lang, $STRIP-CHARS), 
         $LANG-CHAR-PATTERN)
     return
-        if (not($lang) or this:lang-exists($lang)) then ()
+        if (fn:not($lang) or this:lang-exists($lang)) then ()
         else
             let $new-lang := 
                 <le:lang xmlns:le="http://scholarsportal.info/xqmvc/langedit">{
@@ -65,14 +65,14 @@ as empty-sequence()
                         }
                 }</le:lang>
             return
-                xdmp:document-insert(this:path($lang), $new-lang)
+                processor:store(this:path($lang), $new-lang)
 };
 
 declare function this:lang-delete($lang as xs:string)
 as empty-sequence()
 {
-    if (not(this:lang-exists($lang))) then ()
-    else xdmp:document-delete(this:path($lang))
+    if (fn:not(this:lang-exists($lang))) then ()
+    else processor:delete(this:path($lang))
 };
 
 declare function this:value-exists($id as xs:string)
@@ -81,7 +81,7 @@ as xs:boolean
     let $lang := this:lang-list()[1]
     return
         this:lang-exists($lang) and 
-            exists(doc(this:path($lang))/le:lang/le:value[@id eq $id])
+            fn:exists(processor:doc(this:path($lang))/le:lang/le:value[@id eq $id])
 };
 
 declare function this:value-create($key as xs:string)
@@ -89,48 +89,48 @@ as empty-sequence()
 {
     let $key := this:filter(this:strip($key, $STRIP-CHARS), $KEY-CHAR-PATTERN)
     return
-        if (not($key)) then ()
+        if (fn:not($key)) then ()
         else
             let $new-value := 
                 element le:value { 
-                    attribute id { xdmp:random() },
+                    attribute id { processor:random() },
                     attribute key { $key }
                 }
             return
                 for $lang in this:lang-list()
                 return
-                    xdmp:node-insert-child(doc(this:path($lang))/le:lang, 
+                    processor:node-insert-child(processor:doc(this:path($lang))/le:lang, 
                         $new-value)
 };
 
 declare function this:value-retrieve($lang as xs:string, $id as xs:string)
 as element(le:value)?
 {
-    doc(this:path($lang))/le:lang/le:value[@id eq $id]
+    processor:doc(this:path($lang))/le:lang/le:value[@id eq $id]
 };
 
 declare function this:value-list($lang as xs:string, $filter as xs:string?)
 as element(le:value)*
 {
-    let $values := doc(this:path($lang))/le:lang/le:value
+    let $values := processor:doc(this:path($lang))/le:lang/le:value
     return
-        if (not($filter)) then
+        if (fn:not($filter)) then
             $values
         else
             for $value in $values
-            where matches($value/@key, $filter)
+            where fn:matches($value/@key, $filter)
             return $value 
 };
 
 declare function this:value-update($lang as xs:string, $id as xs:string,
     $key as xs:string, $text as xs:string)
 {
-    if (not(this:value-exists($id))) then ()
+    if (fn:not(this:value-exists($id))) then ()
     else
         let $key := this:filter(this:strip($key, $STRIP-CHARS), 
             $KEY-CHAR-PATTERN)
         return
-            if (not($key)) then ()
+            if (fn:not($key)) then ()
             else (
             
                 (: replace key and text in current language :)
@@ -141,7 +141,7 @@ declare function this:value-update($lang as xs:string, $id as xs:string,
                         attribute key { $key },
                         text { $text }
                     }
-                return xdmp:node-replace($old-value, $new-value)
+                return processor:node-replace($old-value, $new-value)
                 
                 ,
                 
@@ -156,31 +156,31 @@ declare function this:value-update($lang as xs:string, $id as xs:string,
                             attribute key { $key },
                             text { $old-value/text() }
                         }
-                    return xdmp:node-replace($old-value, $new-value)
+                    return processor:node-replace($old-value, $new-value)
             )
 };
 
 declare function this:value-delete($id as xs:string)
 as empty-sequence()
 {
-    if (not(this:value-exists($id))) then ()
+    if (fn:not(this:value-exists($id))) then ()
     else
         for $lang in this:lang-list()
-        return xdmp:node-delete(this:value-retrieve($lang, $id))
+        return processor:node-delete(this:value-retrieve($lang, $id))
 };
 
 declare function this:key-retrieve($lang as xs:string, $key as xs:string)
 as attribute(key)?
 {
-    doc(this:path($lang))/le:lang/le:value[@key eq $key]/@key
+    processor:doc(this:path($lang))/le:lang/le:value[@key eq $key]/@key
 };
 
 declare function this:category-list($lang as xs:string)
 as xs:string*
 {
-    if (not(this:lang-exists($lang))) then ()
+    if (fn:not(this:lang-exists($lang))) then ()
     else
-        distinct-values(
+        fn:distinct-values(
             for $value in this:value-list($lang, ())
             return this:value-key-category($value)
         )
@@ -193,7 +193,7 @@ as xs:string*
 declare function this:path($lang as xs:string)
 as xs:string
 {
-    concat($cfg:storage-dir, '/', $cfg:file-prefix, $lang, '.xml')
+    fn:concat($cfg:storage-dir, '/', $cfg:file-prefix, $lang, '.xml')
 };
 
 declare function this:filter($string as xs:string, $pattern as xs:string)
@@ -202,12 +202,12 @@ as xs:string
     let $filtered-string := ''
     let $work :=
         let $chars :=
-            for $codepoint in string-to-codepoints($string)
-            return codepoints-to-string($codepoint)
+            for $codepoint in fn:string-to-codepoints($string)
+            return fn:codepoints-to-string($codepoint)
         for $char in $chars
         return
-            if (matches($char, $pattern)) then 
-                xdmp:set($filtered-string, concat($filtered-string, $char))
+            if (fn:matches($char, $pattern)) then 
+                xdmp:set($filtered-string, fn:concat($filtered-string, $char))
             else ()
     return $filtered-string
 };
@@ -215,20 +215,20 @@ as xs:string
 declare function this:value-key-category($value as element(le:value))
 as xs:string
 {
-    this:key-category(string($value/@key))
+    this:key-category(fn:string($value/@key))
 };
 
 declare function this:value-key-name($value as element(le:value))
 as xs:string
 {
-    this:key-name(string($value/@key))
+    this:key-name(fn:string($value/@key))
 };
 
 declare function this:key-category($key as xs:string)
 as xs:string
 {
-    let $parts := tokenize($key, '\.')
-    let $category := string-join($parts[1 to last() - 1], '.')
+    let $parts := fn:tokenize($key, '\.')
+    let $category := fn:string-join($parts[1 to last() - 1], '.')
     return
         if ($category) then $category else ''
 };
@@ -236,7 +236,7 @@ as xs:string
 declare function this:key-name($key as xs:string)
 as xs:string
 {
-    let $parts := tokenize($key, '\.')
+    let $parts := fn:tokenize($key, '\.')
     let $key := $parts[last()]
     return 
         if ($key) then $key else ''
@@ -245,7 +245,7 @@ as xs:string
 declare function this:value-text($value as element(le:value))
 as xs:string
 {
-    string($value/text())
+    fn:string($value/text())
 };
 
 declare function this:strip($str as xs:string, $chars as xs:string*)
@@ -258,20 +258,20 @@ declare function this:strip-left($str as xs:string, $chars as xs:string*)
 as xs:string
 {
     if (this:char-at($str, 1) = $chars) then
-        this:strip-left(substring($str, 2), $chars)
+        this:strip-left(fn:substring($str, 2), $chars)
     else $str
 };
 
 declare private function this:strip-right($str as xs:string, $chars as xs:string*)
 as xs:string
 {
-    if (this:char-at($str, string-length($str)) = $chars) then
-        this:strip-right(substring($str, 1, string-length($str)-1), $chars)
+    if (this:char-at($str, fn:string-length($str)) = $chars) then
+        this:strip-right(fn:substring($str, 1, fn:string-length($str)-1), $chars)
     else $str
 };
 
 declare function this:char-at($str as xs:string, $i as xs:integer)
 as xs:string
 {
-    substring($str, $i, 1)
+    fn:substring($str, $i, 1)
 };

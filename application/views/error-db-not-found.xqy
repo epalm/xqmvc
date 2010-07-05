@@ -1,5 +1,7 @@
-xquery version "1.0-ml";
+xquery version "1.0";
+
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../system/xqmvc.xqy";
+
 declare variable $data as map:map external;
 
 <div>

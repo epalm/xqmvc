@@ -1,6 +1,8 @@
-xquery version "1.0-ml";
+xquery version "1.0";
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../system/xqmvc.xqy";
 import module namespace user = "http://user.manager.com" at "../models/user-model.xqy";
+import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../system/processor/processor.xqy";
+
 declare variable $data as map:map external;
 
 <div>
@@ -27,7 +29,7 @@ declare variable $data as map:map external;
                     <td>{ $user/email/text() }</td>
                     <td>{ $user/first-name/text() }</td>
                     <td>{ $user/last-name/text() }</td>
-                    <td>{ xdmp:strftime("%a %d %b %Y %I:%M%P", xs:dateTime($user/created/text())) }</td>
+                    <td>{ processor:format-dateTime-for-human(xs:dateTime($user/created/text())) }</td>
                 </tr>
         }
     </table>
