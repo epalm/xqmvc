@@ -22,6 +22,7 @@ xquery version "1.0";
  :)
 module namespace xqmvc = "http://scholarsportal.info/xqmvc/core";
 import module namespace xqmvc-conf = "http://scholarsportal.info/xqmvc/config" at "../application/config/config.xqy";
+import module namespace map = "http://scholarsportal.info/xqmvc/system/map" at "map.xqy";
 import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "processor/processor.xqy";
 declare namespace xqmvc-ctrlr = "http://scholarsportal.info/xqmvc/controller";
 
@@ -96,15 +97,7 @@ as item()*
 declare function _view($view-file as xs:string, $pairs as item()*)
 as item()*
 {
-    processor:execute($view-file, $sequence-to-map) (: TODO replace map with element tree :)
-
-    xdmp:invoke($view-file,
-        (xs:QName("data"), sequence-to-map($pairs)),
-        <options xmlns="xdmp:eval">
-            <isolation>different-transaction</isolation>
-            <prevent-deadlocks>true</prevent-deadlocks>
-        </options>
-    )
+    processor:execute($view-file, map:sequence-to-map($pairs))
 };
 
 declare function view($view as xs:string, $pairs as item()*)

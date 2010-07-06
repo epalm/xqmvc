@@ -27,6 +27,15 @@ declare function impl:execute-module-function($module-namespace as xs:anyURI, $c
         )
 };
 
+declare function impl:execute($view-file as xs:anyURI, $map as element(map)) {
+
+    (: requires eXist 1.4.1+ :)
+    
+    util:eval($view-file, 
+        (xs:QName("data"), sequence-to-map($pairs))
+    )
+};
+
 declare function impl:http-response-redirect($location as xs:anyURI) as empty()
 {
     response:redirect-to($location)

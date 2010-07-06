@@ -19,6 +19,10 @@ declare function processor:execute-module-function($module-namespace as xs:anyUR
     impl:execute-module-function($module-namespace, $controller-file, $function-name);
 };
 
+declare function processor:execute($view-file as xs:anyURI, $map as element(map)) {
+    impl:execute($view-file, $map)
+};
+
 declare function processor:http-response-redirect($location as xs:anyURI) as empty() {
     impl:http-response-redirect($location)
 };

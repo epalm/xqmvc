@@ -21,6 +21,16 @@ declare function impl:execute-module-function($module-namespace as xs:anyURI, $c
         )
 };
 
+declare function impl:execute($view-file as xs:anyURI, $map as element(map)) {
+    xdmp:invoke($view-file, 
+        (xs:QName("data"), sequence-to-map($pairs)),
+        <options xmlns="xdmp:eval">
+            <isolation>different-transaction</isolation>
+            <prevent-deadlocks>true</prevent-deadlocks>
+        </options>
+    )
+};
+
 declare function impl:http-response-redirect($location as xs:anyURI) as empty()
 {
     xdmp:redirect-response($location)
