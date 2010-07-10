@@ -51,40 +51,8 @@ as xs:string
             fn:concat('lang file [', $path, '] not found')
         else
             let $value := fn:string(this:value($path, $key))
-            let $substitutions :=
-                for $token at $i in $tokens
-                return xdmp:set($value, fn:replace($value, fn:concat('\[', $i, '\]'), 
-                    $token))
-            return
+            let $value := this:sub_var($tokens, $value) return
                 if ($value) then $value else fn:concat('[', $key, ']')
-                
-                
-                (: TODO replace use of xdmp:set for substitutions with - :)
-                (:
-                let $new-value := fn:replace(
-                	$value,
-                	fn:concat(
-                		fn:string-join(
-                			for $i in 1 to fn:count($tokens) return
-                				fn:concat("(.*)(\[", $i, "\])")
-                		, ""),
-                		"(.*)"
-                	),
-                	fn:concat(
-                		fn:string-join(
-                			for $i in 1 to fn:count($tokens) return
-                				fn:concat(
-                					if($i gt 1) then(" ") else (""),
-                					"$", (($i * 2) - 1),
-                					" ",
-                					$tokens[$i]
-                				)
-                		, ""),
-                		" $", (((fn:count($tokens) + 1) * 2) - 1)
-                	)
-                )
-                :)
-
 };
 
 declare function this:text($key as xs:string, $tokens as xs:string*)
@@ -201,12 +169,28 @@ declare function this:accept($x as node(),$tokens as xs:string*) as node()*
         default return this:visit($x,$tokens)
 };
 
-declare function this:sub_var($tokens as xs:string*,$text)
+declare function this:sub_var($tokens as xs:string*, $value)
 {
-    let $dosub := 
-            for $token at $i in $tokens
-                return
-                    xdmp:set($text, fn:replace($text, fn:concat('\[', $i, '\]'), $token))
-    
-    return $text 
+    fn:replace(
+        $value,
+        fn:concat(
+            fn:string-join(
+                for $i in 1 to fn:count($tokens) return
+                	fn:concat("(.*)(\[", $i, "\])")
+            , ""),
+            "(.*)"
+        ),
+        fn:concat(
+            fn:string-join(
+                for $i in 1 to fn:count($tokens) return
+                	fn:concat(
+                		if($i gt 1) then(" ") else (""),
+                		"$", (($i * 2) - 1),
+                		" ",
+                		$tokens[$i]
+                	)
+            , ""),
+            " $", (((fn:count($tokens) + 1) * 2) - 1)
+        )
+    )
 };

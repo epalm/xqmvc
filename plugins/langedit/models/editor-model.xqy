@@ -200,15 +200,16 @@ declare function this:filter($string as xs:string, $pattern as xs:string)
 as xs:string
 {
     let $filtered-string := ''
+    
     let $work :=
-        let $chars :=
-            for $codepoint in fn:string-to-codepoints($string)
-            return fn:codepoints-to-string($codepoint)
-        for $char in $chars
-        return
+        let $chars := for $codepoint in fn:string-to-codepoints($string) return
+            fn:codepoints-to-string($codepoint)
+        
+        for $char in $chars return
             if (fn:matches($char, $pattern)) then 
                 xdmp:set($filtered-string, fn:concat($filtered-string, $char))
             else ()
+            
     return $filtered-string
 };
 
