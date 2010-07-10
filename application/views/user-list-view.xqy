@@ -2,14 +2,15 @@ xquery version "1.0";
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../system/xqmvc.xqy";
 import module namespace user = "http://user.manager.com" at "../models/user-model.xqy";
 import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../system/processor/processor.xqy";
+import module namespace map = "http://scholarsportal.info/xqmvc/system/map" at "../../system/map.xqy";
 
-declare variable $data as map:map external;
+declare variable $data as element(map) external;
 
 <div>
     { xqmvc:view('user-creation-form') }
     <table>
         <tr>
-            <th>&nbsp;</th>
+            <th>&#160;</th>
             <th>Email</th>
             <th>First</th>
             <th>Last Name</th>
@@ -22,9 +23,9 @@ declare variable $data as map:map external;
                 <tr>
                     <td>
                         <a href="{ xqmvc:link('user', 'view', ('id', $user/@id)) }">view</a>
-                        &nbsp;
+                        &#160;
                         <a href="{ xqmvc:link('user', 'delete', ('id', $user/@id)) }">delete</a>
-                        &nbsp;
+                        &#160;
                     </td>
                     <td>{ $user/email/text() }</td>
                     <td>{ $user/first-name/text() }</td>
@@ -33,5 +34,5 @@ declare variable $data as map:map external;
                 </tr>
         }
     </table>
-    <p><a href="{ xqmvc:link('welcome', 'index') }">&laquo; back to the Welcome Page</a></p>
+    <p><a href="{ xqmvc:link('welcome', 'index') }">&#171; back to the Welcome Page</a></p>
 </div>

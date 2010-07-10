@@ -2,8 +2,9 @@ xquery version "1.0";
 
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../../system/xqmvc.xqy";
 import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../../system/processor/processor.xqy";
+import module namespace map = "http://scholarsportal.info/xqmvc/system/map" at "../../../system/map.xqy";
 
-declare variable $data as map:map external;
+declare variable $data as element(map) external;
 
 processor:http-response-content-type('application/xhtml+xml'),
 

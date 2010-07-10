@@ -3,8 +3,9 @@ xquery version "1.0";
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../../system/xqmvc.xqy";
 import module namespace cfg = "http://scholarsportal.info/xqmvc/langedit/config" at "../config/config.xqy";
 import module namespace editor = "http://scholarsportal.info/xqmvc/langedit/m/editor" at "../models/editor-model.xqy";
+import module namespace map = "http://scholarsportal.info/xqmvc/system/map" at "../../../system/map.xqy";
 
-declare variable $data as map:map external;
+declare variable $data as element(map) external;
 
 declare variable $INPUT-EMPTY-SIZE as xs:integer := 50;
 declare variable $INPUT-MAX-SIZE as xs:integer := 50;
@@ -101,7 +102,7 @@ declare variable $INPUT-MAX-SIZE as xs:integer := 50;
                                                     attribute class { 'key' }
                                                 }
                                             }</td>
-                                            <td>&nbsp;=&nbsp;</td>
+                                            <td>#160;=&#160;</td>
                                             <td>{
                                                 if (string-length($text) gt $INPUT-MAX-SIZE) then
                                                     element textarea {

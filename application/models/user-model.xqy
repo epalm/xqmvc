@@ -1,4 +1,5 @@
 xquery version "1.0";
+
 module namespace user = "http://user.manager.com";
 
 import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../system/processor/processor.xqy";

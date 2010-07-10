@@ -371,19 +371,6 @@ as xs:string
 };
 
 (:~
- : Converts an even-length sequence of key-value pairs into a map:map().
- :)
-declare function sequence-to-map($pairs as item()*)
-as map:map
-{
-    let $map := map:map()
-    let $put :=
-        for $i in (1 to fn:count($pairs))[. mod 2 ne 0]
-          return map:put($map, $pairs[$i], $pairs[$i+1])
-    return $map
-};
-
-(:~
  : Recursively applies a namespace to an xml structure.
  :)
 declare function apply-namespace($node as node(), $namespace as xs:string)

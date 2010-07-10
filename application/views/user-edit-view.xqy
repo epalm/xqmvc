@@ -2,8 +2,9 @@ xquery version "1.0";
 
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../system/xqmvc.xqy";
 import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../system/processor/processor.xqy";
+import module namespace map = "http://scholarsportal.info/xqmvc/system/map" at "../../system/map.xqy";
 
-declare variable $data as map:map external;
+declare variable $data as element(map) external;
 
 (:~
  : Converts 'first-name' into 'First Name'
@@ -33,7 +34,7 @@ as xs:string
                     </tr>
             }
             <tr>
-                <td>&nbsp;</td>
+                <td>&#160;</td>
                 <td>
                     <input type="hidden" name="id" value="{ map:get($data, 'user')/@id }"/>
                     <input type="submit" value="Save"/>
@@ -41,5 +42,5 @@ as xs:string
             </tr>
         </table>
     </form>
-    <p><a href="{ xqmvc:link('user', 'list') }">&laquo; back to the User List</a></p>
+    <p><a href="{ xqmvc:link('user', 'list') }">&#171; back to the User List</a></p>
 </div>

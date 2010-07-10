@@ -2,6 +2,8 @@ xquery version "1.0";
 
 module namespace impl = "http://scholarsportal.info/xqmvc/system/processor/impl/exist-db";
 
+import module namespace map = "http://scholarsportal.info/xqmvc/system/map" at "../../system/map.xqy";
+
 declare namespace datetime = "http://exist-db.org/xquery/datetime";
 declare namespace request = "http://exist-db.org/xquery/request";
 declare namespace response = "http://exist-db.org/xquery/response";
@@ -32,7 +34,7 @@ declare function impl:execute($view-file as xs:anyURI, $map as element(map)) {
     (: requires eXist 1.4.1+ :)
     
     util:eval($view-file, 
-        (xs:QName("data"), sequence-to-map($pairs))
+        (xs:QName("data"), $map)
     )
 };
 
