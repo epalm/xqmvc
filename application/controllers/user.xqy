@@ -22,17 +22,15 @@ import module namespace processor = "http://scholarsportal.info/xqmvc/system/pro
 
 import module namespace user = "http://user.manager.com" at "../models/user-model.xqy";
 
-declare function index()
-as item()*
+declare function xqmvc-controller:index() as item()*
 {
-    list()
+    xqmvc-controller:list()
 };
 
-declare function list()
-as item()*
+declare function xqmvc-controller:list() as item()*
 {
     if (fn:not(user:db-exists())) then
-        _request-db-creation()
+        _xqmvc-controller:request-db-creation()
     else
         xqmvc:template('master-template', (
             'browsertitle', 'User Manager',
@@ -40,11 +38,10 @@ as item()*
         ))
 };
 
-declare function view()
-as item()*
+declare function xqmvc-controller:view() as item()*
 {
     if (fn:not(user:db-exists())) then
-        _request-db-creation()
+        _xqmvc-controller:request-db-creation()
     else
         let $id := processor:http-request-param("id")
         return
@@ -63,42 +60,39 @@ as item()*
                     ))
 };
 
-declare function db-create()
+declare function xqmvc-controller:db-create()
 {
     user:db-create(),
     xqmvc:redirect(xqmvc:link("user", "list"))
 };
 
-declare function create()
-as item()*
+declare function xqmvc-controller:create() as item()*
 {
     let $email := processor:http-request-param("email")
     let $first-name := processor:http-request-param("first-name")
     let $last-name := processor:http-request-param("last-name")
     let $work := user:create($email, $first-name, $last-name)
-    return xqmvc:redirect(xqmvc:link("user", "list"))
+        return xqmvc:redirect(xqmvc:link("user", "list"))
 };
 
-declare function save()
-as item()*
+declare function xqmvc-controller:save() as item()*
 {
     let $id := processor:http-request-param("id")
     let $email := processor:http-request-param("email")
     let $first-name := processor:http-request-param("first-name")
     let $last-name := processor:http-request-param("last-name")
     let $work := user:save($id, $email, $first-name, $last-name)
-    return xqmvc:redirect(xqmvc:link("user", "list"))
+        return xqmvc:redirect(xqmvc:link("user", "list"))
 };
 
-declare function delete()
-as item()*
+declare function xqmvc-controller:delete() as item()*
 {
     let $id := processor:http-request-param("id")
     let $work := user:delete($id)
-    return xqmvc:redirect(xqmvc:link("user", "list"))
+        return xqmvc:redirect(xqmvc:link("user", "list"))
 };
 
-declare function _request-db-creation()
+declare function xqmvc-controller:_request-db-creation()
 {
     xqmvc:template('master-template', (
         'body', xqmvc:view('error-db-not-found', (

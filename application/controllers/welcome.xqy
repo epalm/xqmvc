@@ -17,11 +17,11 @@ xquery version "1.0";
  :)
 
 module namespace xqmvc-controller = "http://scholarsportal.info/xqmvc/controller";
+
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../system/xqmvc.xqy";
 import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../system/processor/processor.xqy";
 
-declare function index()
-as item()*
+declare function xqmvc-controller:index() as item()*
 {
     xqmvc:template('master-template', (
         'browsertitle', 'Welcome to XQMVC!',
