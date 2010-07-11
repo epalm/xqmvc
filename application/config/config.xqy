@@ -28,7 +28,7 @@ module namespace xqmvc-conf = "http://scholarsportal.info/xqmvc/config";
  : eg: This web app is in a subdir named 'webapp' of the App-Server: '/webapp'
  : eg: This web app is in the root of the App-Server (leave blank):  ''
  :)
-declare variable $app-root as xs:string := '';
+declare variable $xqmvc-conf:app-root as xs:string := '';
 
 (:
  : Enables/disables URL Rewriting.  All this flag truly does is change the 
@@ -36,40 +36,40 @@ declare variable $app-root as xs:string := '';
  : Please see the documentation for instructions on how to set up URL 
  : Rewriting.
  :)
-declare variable $url-rewrite as xs:boolean := fn:false();
+declare variable $xqmvc-conf:url-rewrite as xs:boolean := fn:false();
 
 (:
  : Enables/disables debug output.  This will affect performance of the
  : application and should be off in production environments.
  :)
-declare variable $debug as xs:boolean := fn:false();
+declare variable $xqmvc-conf:debug as xs:boolean := fn:false();
 
 (:
  : If URL Rewriting is on, you may optionally allow all your urls to contain a 
  : suffix, such as "http://host.com/webapp/controller/function.html".  Leave 
  : blank for no suffix.
  :)
-declare variable $url-suffix as xs:string := '.html';
+declare variable $xqmvc-conf:url-suffix as xs:string := '.html';
 
 (:
  : Default controller to load, if none specified.
  :)
-declare variable $default-controller as xs:string := 'welcome';
+declare variable $xqmvc-conf:default-controller as xs:string := 'welcome';
 
 (:
  : Field name to use in the querystring when specifying which Controller to 
  : load.
  :)
-declare variable $controller-querystring-field as xs:string := '_c';
+declare variable $xqmvc-conf:controller-querystring-field as xs:string := '_c';
 
 (:
  : Field name to use in the querystring when specifying which Function to 
  : execute.
  :)
-declare variable $function-querystring-field as xs:string := '_f';
+declare variable $xqmvc-conf:function-querystring-field as xs:string := '_f';
 
 (:
  : Field name to use in the querystring when specifying which Plugin to 
  : use.  If omitted in the querystring, no plugin is used.
  :)
-declare variable $plugin-querystring-field as xs:string := '_p';
+declare variable $xqmvc-conf:plugin-querystring-field as xs:string := '_p';

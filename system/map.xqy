@@ -18,14 +18,12 @@ module namespace map = "http://scholarsportal.info/xqmvc/system/map";
  : -> allows values to be item()
  :)
 
-declare function create()
-as element(map)
+declare function map:create() as element(map)
 {
     <map/>
 };
 
-declare function put($map as element(map), $key as xs:string, $value as item()*)
-as element(map)
+declare function map:put($map as element(map), $key as xs:string, $value as item()*) as element(map)
 {
     <map>{
         for $entry in $map/entry[@key ne $key]
@@ -36,8 +34,7 @@ as element(map)
     }</map>
 };
 
-declare function remove($map as element(map), $key as xs:string)
-as element(map)
+declare function map:remove($map as element(map), $key as xs:string) as element(map)
 {
     <map>{
         for $entry in $map/entry[@key ne $key]
@@ -45,38 +42,32 @@ as element(map)
     }</map>
 };
 
-declare function get($map as element(map), $key as xs:string)
-as item()*
+declare function map:get($map as element(map), $key as xs:string) as item()*
 {
     $map/entry[@key eq $key]/value/node()
 };
 
-declare function contains-key($map as element(map), $key as xs:string)
-as xs:boolean
+declare function map:contains-key($map as element(map), $key as xs:string) as xs:boolean
 {
     fn:exists($map/entry[@key eq $key])
 };
 
-declare function keys($map as element(map))
-as xs:string*
+declare function map:keys($map as element(map)) as xs:string*
 {
     $map/entry/@key
 };
 
-declare function size($map as element(map))
-as xs:integer
+declare function map:size($map as element(map)) as xs:integer
 {
     fn:count($map/entry)
 };
 
-declare function is-empty($map as element(map))
-as xs:boolean
+declare function map:is-empty($map as element(map)) as xs:boolean
 {
-    size($map) eq 0
+    map:size($map) eq 0
 };
 
-declare function sequence-to-map($pairs as item()*)
-as element(map)
+declare function map:sequence-to-map($pairs as item()*) as element(map)
 {
     <map>{
         for $i in (1 to fn:count($pairs))[. mod 2 ne 0]

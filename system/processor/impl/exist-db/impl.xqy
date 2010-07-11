@@ -70,7 +70,7 @@ declare function impl:http-request-param($param-name as xs:string) as xs:string*
 declare function impl:http-session-param($param-name as xs:string, $default-value as item()*) as item()*
 {
     let $session-param := session:get-attribute($param-name) return
-        if(empty($session-param))return
+        if(empty($session-param))then
         (
             $default-value
         )
@@ -123,7 +123,7 @@ declare function impl:doc($document-uri as xs:string?) as node()?
     fn:doc(impl:_uri_to_db_uri($document-uri))
 };
 
-declare function impl:directory($uri as xs:string) as document()*
+declare function impl:directory($uri as xs:string) as document-node()*
 {
     collection(impl:_uri_to_db_uri($uri))
 };
@@ -164,7 +164,7 @@ declare function impl:_uri_to_db_uri($document-uri as xs:anyURI) as xs:anyURI {
     
     let $db-document-uri := if(fn:not(fn:starts-with($document-uri, $impl:db-data-root))) then
     (
-        if(fn:starts-with($document-uri, "/")then
+        if(fn:starts-with($document-uri, "/"))then
         (
             fn:concat($impl:db-data-root, $document-uri)
         )

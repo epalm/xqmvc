@@ -17,7 +17,7 @@ import module namespace impl = "http://scholarsportal.info/xqmvc/system/processo
 
 
 declare function processor:execute-module-function($module-namespace as xs:anyURI, $controller-file as xs:anyURI, $function-name as xs:string) as item()* {
-    impl:execute-module-function($module-namespace, $controller-file, $function-name);
+    impl:execute-module-function($module-namespace, $controller-file, $function-name)
 };
 
 declare function processor:execute($view-file as xs:anyURI, $map as element(map)) {
@@ -63,17 +63,17 @@ declare function processor:log($log-message as xs:string) as empty()
 
 declare function processor:architecture() as xs:string
 {
-    impl:architecture();
+    impl:architecture()
 };
 
 declare function processor:platform() as xs:string
 {
-    impl:platform();
+    impl:platform()
 };
 
 declare function processor:version() as xs:string
 {
-    impl:version();
+    impl:version()
 };
 
 declare function processor:store($document-uri as xs:anyURI, $root as node()) as empty()
@@ -96,7 +96,7 @@ declare function processor:doc($document-uri as xs:string?) as node()?
     impl:doc($document-uri)
 };
 
-declare function processor:directory($uri as xs:string) as document()*
+declare function processor:directory($uri as xs:string) as document-node()*
 {
     impl:directory($uri)
 };
@@ -123,7 +123,7 @@ declare function processor:node-delete($node as node()) as empty()
 
 declare function processor:format-dateTime-for-human($dateTime as xs:dateTime) as xs:string
 {
-    impl:format-dateTime-for-human($dateTime);
+    impl:format-dateTime-for-human($dateTime)
 };
 
 declare function processor:parse-with-fixes($unparsed as xs:string) as node()+ {

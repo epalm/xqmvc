@@ -53,10 +53,11 @@ declare function _controller($controller-file as xs:string,
 as item()*
 {
     if (fn:starts-with($function, '_')) then
-        ()
+    ()
     else
-        return
-            processor:execute-module-function(get-namespace-for-prefix("xqmvc-ctrlr"), xs:anyURI($controller-file), $function)
+    (
+        processor:execute-module-function(get-namespace-for-prefix("xqmvc-ctrlr"), xs:anyURI($controller-file), $function)
+    )
 };
 
 declare function get-namespace-for-prefix($prefix as xs:string) as xs:anyURI?
