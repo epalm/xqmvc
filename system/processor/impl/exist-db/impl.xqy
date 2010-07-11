@@ -160,7 +160,7 @@ declare function impl:parse-with-fixes($unparsed as xs:string) as node()+
 
 
 
-declare function impl:_uri_to_db_uri($document-uri as xs:anyURI) as xs:anyURI {
+declare function impl:_uri_to_db_uri($document-uri as xs:string) as xs:string {
     
     let $db-document-uri := if(fn:not(fn:starts-with($document-uri, $impl:db-data-root))) then
     (
