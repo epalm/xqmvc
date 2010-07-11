@@ -8,11 +8,12 @@ import module namespace xqmvc-conf = "http://scholarsportal.info/xqmvc/config" a
 : Choose a processor to use
 :)
 
-(: MarkLogic :)
-(: import module namespace impl = "http://scholarsportal.info/xqmvc/system/processor/impl/marklogic" at "impl/marklogic/impl.xqy"; :)
- 
 (: eXist-db :)
 import module namespace impl = "http://scholarsportal.info/xqmvc/system/processor/impl/exist-db" at "impl/exist-db/impl.xqy";
+
+(: MarkLogic :)
+(: import module namespace impl = "http://scholarsportal.info/xqmvc/system/processor/impl/marklogic" at "impl/marklogic/impl.xqy"; :)
+
 
 
 declare function processor:execute-module-function($module-namespace as xs:anyURI, $controller-file as xs:anyURI, $function-name as xs:string) as item()* {
