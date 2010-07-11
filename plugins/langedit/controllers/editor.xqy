@@ -24,7 +24,7 @@ import module namespace cfg = "http://scholarsportal.info/xqmvc/langedit/config"
 import module namespace lang = "http://scholarsportal.info/xqmvc/langedit/m/lang" at "../models/lang-model.xqy";
 import module namespace editor = "http://scholarsportal.info/xqmvc/langedit/m/editor" at "../models/editor-model.xqy";
 
-declare function index()
+declare function xqmvc-controller:index()
 {
     let $lang := processor:http-request-param('lang', '')
     let $filter := processor:http-request-param('filter', '')
@@ -34,10 +34,10 @@ declare function index()
             'body',
                 
                 if (fn:not($lang)) then
-                    _not-specified()
+                    xqmvc-controller:_not-specified()
                 
                 else if (fn:not(fn:doc-available($path))) then
-                    _not-found($lang)
+                    xqmvc-controller:_not-found($lang)
                 
                 else
                     xqmvc:plugin-view($cfg:plugin-name, 'main-view', (
@@ -48,19 +48,19 @@ declare function index()
         ))
 };
 
-declare function _not-specified()
+declare function xqmvc-controller:_not-specified()
 {
     xqmvc:plugin-view($cfg:plugin-name, 'error-lang-not-specified-view')
 };
 
-declare function _not-found($lang as xs:string?)
+declare function xqmvc-controller:_not-found($lang as xs:string?)
 {
     xqmvc:plugin-view($cfg:plugin-name, 'error-lang-not-found-view', (
         'lang', $lang
     ))
 };
 
-declare function lang-create()
+declare function xqmvc-controller:lang-create()
 {
     let $lang := processor:http-request-param('lang')
     return (
@@ -70,7 +70,7 @@ declare function lang-create()
     )
 };
 
-declare function lang-delete()
+declare function xqmvc-controller:lang-delete()
 {
     let $lang := processor:http-request-param('lang')
     return (
@@ -79,7 +79,7 @@ declare function lang-delete()
     )
 };
 
-declare function value-save-all()
+declare function xqmvc-controller:value-save-all()
 {
     let $lang := processor:http-request-param('lang')
     let $filter := processor:http-request-param('filter')
@@ -100,10 +100,10 @@ declare function value-save-all()
     )
 };
 
-declare function value-create()
+declare function xqmvc-controller:value-create()
 {
     let $lang := processor:http-request-param('lang')
-    let $filter := xprocessor:http-request-param('filter')
+    let $filter := processor:http-request-param('filter')
     let $key := processor:http-request-param('key')
     return (
         editor:value-create($key),
@@ -112,7 +112,7 @@ declare function value-create()
     )
 };
 
-declare function value-delete()
+declare function xqmvc-controller:value-delete()
 {
     let $lang := processor:http-request-param('lang')
     let $id := processor:http-request-param('id')

@@ -41,9 +41,7 @@ declare namespace le = "http://scholarsportal.info/xqmvc/langedit";
  :         $SESS-VAR, followed by $DEFAULT-LANG in lang-custom.xqy.
  : @return A text string.
  :)
-declare function this:text($key as xs:string, $tokens as xs:string*, 
-    $lang as xs:string)
-as xs:string
+declare function this:text($key as xs:string, $tokens as xs:string*, $lang as xs:string) as xs:string
 {
     let $path := this:path($lang)
     return
@@ -55,11 +53,10 @@ as xs:string
                 if ($value) then $value else fn:concat('[', $key, ']')
 };
 
-declare function this:text($key as xs:string, $tokens as xs:string*)
-as xs:string
+declare function this:text($key as xs:string, $tokens as xs:string*) as xs:string
 {
-    let $lang := $cfg:default-lang
-    return this:text($key, $tokens, $lang)
+    let $lang := $cfg:default-lang return
+        this:text($key, $tokens, $lang)
 };
 
 declare function this:text($key as xs:string)
@@ -68,8 +65,7 @@ as xs:string
     this:text($key, ())
 };
 
-declare function this:path($lang as xs:string)
-as xs:string
+declare function this:path($lang as xs:string) as xs:string
 {
     fn:concat($cfg:storage-dir, '/', $cfg:file-prefix, $lang, '.xml')
 };
@@ -80,15 +76,13 @@ as element(le:value)?
     processor:doc($path)/le:lang/le:value[@key eq $key]
 };
 
-declare function this:html($key as xs:string, $tokens as xs:string*)
-as element(span)
+declare function this:html($key as xs:string, $tokens as xs:string*) as element(span)
 {
-    let $lang := $cfg:default-lang
-    return this:html($key, $tokens, $lang)
+    let $lang := $cfg:default-lang return
+        this:html($key, $tokens, $lang)
 };
 
-declare function this:html($key as xs:string)
-as element(span)
+declare function this:html($key as xs:string) as element(span)
 {
     this:html($key, ())
 };
@@ -111,9 +105,7 @@ as element(span)
  : RFD: 2010-06-02:
  : Modified in response to issue#3 
  :)
-declare function this:html($key as xs:string, $tokens as xs:string*,
-    $lang as xs:string)
-as element(span)
+declare function this:html($key as xs:string, $tokens as xs:string*, $lang as xs:string) as element(span)
 {
     let $path := this:path($lang)
     return
@@ -164,9 +156,15 @@ declare function this:visit($x as node(),$tokens as xs:string*) as node()*
 declare function this:accept($x as node(),$tokens as xs:string*) as node()*
 {
     typeswitch ($x)
-        case text() return text { this:sub_var($tokens, fn:string($x)) }
-        case element() return element { fn:node-name($x)} {$x/@*, this:visit($x,$tokens) }                    
-        default return this:visit($x,$tokens)
+        
+        case text() return
+            text { this:sub_var($tokens, fn:string($x)) }
+            
+        case element() return
+            element { fn:node-name($x)} {$x/@*, this:visit($x,$tokens) }                    
+        
+        default return
+            this:visit($x,$tokens)
 };
 
 declare function this:sub_var($tokens as xs:string*, $value)

@@ -1,4 +1,5 @@
 xquery version "1.0";
+
 import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../../system/xqmvc.xqy";
 import module namespace map = "http://scholarsportal.info/xqmvc/system/map" at "../../system/map.xqy";
 import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../system/processor/processor.xqy";

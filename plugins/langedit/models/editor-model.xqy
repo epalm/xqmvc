@@ -26,12 +26,11 @@ import module namespace processor = "http://scholarsportal.info/xqmvc/system/pro
 
 declare namespace le = "http://scholarsportal.info/xqmvc/langedit";
 
-declare variable $LANG-CHAR-PATTERN as xs:string := '[A-Za-z0-9\._-]';
-declare variable $KEY-CHAR-PATTERN as xs:string := '[A-Za-z0-9\._-]';
-declare variable $STRIP-CHARS as xs:string* := ('.', ' ');
+declare variable $this:LANG-CHAR-PATTERN as xs:string := '[A-Za-z0-9\._-]';
+declare variable $this:KEY-CHAR-PATTERN as xs:string := '[A-Za-z0-9\._-]';
+declare variable $this:STRIP-CHARS as xs:string* := ('.', ' ');
 
-declare function this:lang-list()
-as xs:string*
+declare function this:lang-list() as xs:string*
 {
     for $doc in processor:directory(concat($cfg:storage-dir, '/'))
     let $filename := fn:base-uri($doc)
@@ -40,17 +39,15 @@ as xs:string*
     return $lang
 };
 
-declare function this:lang-exists($lang as xs:string)
-as xs:boolean
+declare function this:lang-exists($lang as xs:string) as xs:boolean
 {
     processor:doc-available(this:path($lang))
 };
 
-declare function this:lang-create($lang as xs:string)
-as empty-sequence()
+declare function this:lang-create($lang as xs:string) as empty-sequence()
 {
-    let $lang := this:filter(this:strip($lang, $STRIP-CHARS), 
-        $LANG-CHAR-PATTERN)
+    let $lang := this:filter(this:strip($lang, $this:STRIP-CHARS), 
+        $this:LANG-CHAR-PATTERN)
     return
         if (fn:not($lang) or this:lang-exists($lang)) then ()
         else
@@ -68,15 +65,13 @@ as empty-sequence()
                 processor:store(this:path($lang), $new-lang)
 };
 
-declare function this:lang-delete($lang as xs:string)
-as empty-sequence()
+declare function this:lang-delete($lang as xs:string) as empty-sequence()
 {
     if (fn:not(this:lang-exists($lang))) then ()
     else processor:delete(this:path($lang))
 };
 
-declare function this:value-exists($id as xs:string)
-as xs:boolean
+declare function this:value-exists($id as xs:string) as xs:boolean
 {
     let $lang := this:lang-list()[1]
     return
@@ -84,10 +79,9 @@ as xs:boolean
             fn:exists(processor:doc(this:path($lang))/le:lang/le:value[@id eq $id])
 };
 
-declare function this:value-create($key as xs:string)
-as empty-sequence()
+declare function this:value-create($key as xs:string) as empty-sequence()
 {
-    let $key := this:filter(this:strip($key, $STRIP-CHARS), $KEY-CHAR-PATTERN)
+    let $key := this:filter(this:strip($key, $this:STRIP-CHARS), $this:KEY-CHAR-PATTERN)
     return
         if (fn:not($key)) then ()
         else
@@ -103,14 +97,12 @@ as empty-sequence()
                         $new-value)
 };
 
-declare function this:value-retrieve($lang as xs:string, $id as xs:string)
-as element(le:value)?
+declare function this:value-retrieve($lang as xs:string, $id as xs:string) as element(le:value)?
 {
     processor:doc(this:path($lang))/le:lang/le:value[@id eq $id]
 };
 
-declare function this:value-list($lang as xs:string, $filter as xs:string?)
-as element(le:value)*
+declare function this:value-list($lang as xs:string, $filter as xs:string?) as element(le:value)*
 {
     let $values := processor:doc(this:path($lang))/le:lang/le:value
     return
@@ -122,13 +114,12 @@ as element(le:value)*
             return $value 
 };
 
-declare function this:value-update($lang as xs:string, $id as xs:string,
-    $key as xs:string, $text as xs:string)
+declare function this:value-update($lang as xs:string, $id as xs:string, $key as xs:string, $text as xs:string)
 {
     if (fn:not(this:value-exists($id))) then ()
     else
-        let $key := this:filter(this:strip($key, $STRIP-CHARS), 
-            $KEY-CHAR-PATTERN)
+        let $key := this:filter(this:strip($key, $this:STRIP-CHARS), 
+            $this:KEY-CHAR-PATTERN)
         return
             if (fn:not($key)) then ()
             else (
@@ -160,8 +151,7 @@ declare function this:value-update($lang as xs:string, $id as xs:string,
             )
 };
 
-declare function this:value-delete($id as xs:string)
-as empty-sequence()
+declare function this:value-delete($id as xs:string) as empty-sequence()
 {
     if (fn:not(this:value-exists($id))) then ()
     else
@@ -169,14 +159,12 @@ as empty-sequence()
         return processor:node-delete(this:value-retrieve($lang, $id))
 };
 
-declare function this:key-retrieve($lang as xs:string, $key as xs:string)
-as attribute(key)?
+declare function this:key-retrieve($lang as xs:string, $key as xs:string) as attribute(key)?
 {
     processor:doc(this:path($lang))/le:lang/le:value[@key eq $key]/@key
 };
 
-declare function this:category-list($lang as xs:string)
-as xs:string*
+declare function this:category-list($lang as xs:string) as xs:string*
 {
     if (fn:not(this:lang-exists($lang))) then ()
     else
@@ -190,8 +178,7 @@ as xs:string*
  : HELPER FUNCTIONS
  :)
 
-declare function this:path($lang as xs:string)
-as xs:string
+declare function this:path($lang as xs:string) as xs:string
 {
     fn:concat($cfg:storage-dir, '/', $cfg:file-prefix, $lang, '.xml')
 };
@@ -210,20 +197,17 @@ declare function this:filter($string as xs:string, $pattern as xs:string) as xs:
 			"")
 };
 
-declare function this:value-key-category($value as element(le:value))
-as xs:string
+declare function this:value-key-category($value as element(le:value)) as xs:string
 {
     this:key-category(fn:string($value/@key))
 };
 
-declare function this:value-key-name($value as element(le:value))
-as xs:string
+declare function this:value-key-name($value as element(le:value)) as xs:string
 {
     this:key-name(fn:string($value/@key))
 };
 
-declare function this:key-category($key as xs:string)
-as xs:string
+declare function this:key-category($key as xs:string) as xs:string
 {
     let $parts := fn:tokenize($key, '\.')
     let $category := fn:string-join($parts[1 to last() - 1], '.')
@@ -231,8 +215,7 @@ as xs:string
         if ($category) then $category else ''
 };
 
-declare function this:key-name($key as xs:string)
-as xs:string
+declare function this:key-name($key as xs:string) as xs:string
 {
     let $parts := fn:tokenize($key, '\.')
     let $key := $parts[last()]
@@ -240,36 +223,31 @@ as xs:string
         if ($key) then $key else ''
 };
 
-declare function this:value-text($value as element(le:value))
-as xs:string
+declare function this:value-text($value as element(le:value)) as xs:string
 {
     fn:string($value/text())
 };
 
-declare function this:strip($str as xs:string, $chars as xs:string*)
-as xs:string
+declare function this:strip($str as xs:string, $chars as xs:string*) as xs:string
 {
     this:strip-left(this:strip-right($str, $chars), $chars)
 };
 
-declare function this:strip-left($str as xs:string, $chars as xs:string*)
-as xs:string
+declare function this:strip-left($str as xs:string, $chars as xs:string*) as xs:string
 {
     if (this:char-at($str, 1) = $chars) then
         this:strip-left(fn:substring($str, 2), $chars)
     else $str
 };
 
-declare private function this:strip-right($str as xs:string, $chars as xs:string*)
-as xs:string
+declare private function this:strip-right($str as xs:string, $chars as xs:string*) as xs:string
 {
     if (this:char-at($str, fn:string-length($str)) = $chars) then
         this:strip-right(fn:substring($str, 1, fn:string-length($str)-1), $chars)
     else $str
 };
 
-declare function this:char-at($str as xs:string, $i as xs:integer)
-as xs:string
+declare function this:char-at($str as xs:string, $i as xs:integer) as xs:string
 {
     fn:substring($str, $i, 1)
 };

@@ -8,8 +8,7 @@ import module namespace editor = "http://scholarsportal.info/xqmvc/langedit/m/ed
 declare variable $data as element(map) external;
 
 <div xmlns="http://www.w3.org/1999/xhtml">{
-    for $lang in editor:lang-list()
-    return (
+    for $lang in editor:lang-list() return (
         <a href="{ xqmvc:plugin-link($cfg:plugin-name, 'editor', 'index', ('lang', $lang)) }">{
             if ($lang eq map:get($data, 'current')) then attribute class { 'selected' } else (),
             $lang

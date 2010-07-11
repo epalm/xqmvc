@@ -31,7 +31,7 @@ module namespace this = "http://scholarsportal.info/xqmvc/langedit/config";
  : unless you're prepared to move/rename existing languages files to a new
  : location in the DB.
  :)
-declare variable $storage-dir as xs:string := '/langedit';
+declare variable $this:storage-dir as xs:string := '/langedit';
 
 (:
  : Optionally prefix language filenames.
@@ -42,7 +42,7 @@ declare variable $storage-dir as xs:string := '/langedit';
  : unless you're prepared to move/rename existing languages files to a new
  : location in the DB.
  :)
-declare variable $file-prefix as xs:string := '';
+declare variable $this:file-prefix as xs:string := '';
 
 (:
  : The default language to fetch phrases from.  Note that 
@@ -51,9 +51,9 @@ declare variable $file-prefix as xs:string := '';
  : eg: 'en'
  : eg: processor:http-sessionp-param('lang', 'en')
  :)
-declare variable $default-lang as xs:string := 'en';
+declare variable $this:default-lang as xs:string := 'en';
 
 (:
  : Change the name of this plugin if it conflicts with another XQMVC plugin.
  :)
-declare variable $plugin-name as xs:string := 'langedit';
+declare variable $this:plugin-name as xs:string := 'langedit';
