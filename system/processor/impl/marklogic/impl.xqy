@@ -59,6 +59,11 @@ declare function impl:http-request-param($param-name as xs:string) as xs:string*
     xdmp:get-request-field($param-name)
 };
 
+declare function impl:http-session-param($param-name as xs:string, $default-value as item()*) as item()*
+{
+    xdmp:get-session-field('lang', 'en')
+};
+
 declare function impl:log($log-message as xs:string) as empty()
 {
     xdmp:log($log-message)

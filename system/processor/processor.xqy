@@ -50,6 +50,11 @@ declare function processor:http-request-param($param-name as xs:string) as xs:st
     impl:http-request-param($param-name)
 };
 
+declare function processor:http-session-param($param-name as xs:string, $default-value as item()*) as item()*
+{
+    impl:http-session-param($param-name, $default-value)
+};
+
 declare function processor:log($log-message as xs:string) as empty()
 {
     impl:log($log-message)

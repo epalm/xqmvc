@@ -1,4 +1,4 @@
-xquery version "1.0";
+xdmpxquery version "1.0";
 
 (:
  : Copyright 2009 Ontario Council of University Libraries
@@ -196,21 +196,18 @@ as xs:string
     fn:concat($cfg:storage-dir, '/', $cfg:file-prefix, $lang, '.xml')
 };
 
-declare function this:filter($string as xs:string, $pattern as xs:string)
-as xs:string
+declare function this:filter($string as xs:string, $pattern as xs:string) as xs:string
 {
-    let $filtered-string := ''
-    
-    let $work :=
-        let $chars := for $codepoint in fn:string-to-codepoints($string) return
-            fn:codepoints-to-string($codepoint)
-        
-        for $char in $chars return
-            if (fn:matches($char, $pattern)) then 
-                xdmp:set($filtered-string, fn:concat($filtered-string, $char))
-            else ()
-            
-    return $filtered-string
+    let $chars := for $codepoint in fn:string-to-codepoints($string) return
+    	fn:codepoints-to-string($codepoint)
+    return   
+		fn:string-join(
+    	    for $char in $chars return
+        	    if (fn:matches($char, $pattern)) then 
+            	    $char
+	            else ()
+			,
+			"")
 };
 
 declare function this:value-key-category($value as element(le:value))

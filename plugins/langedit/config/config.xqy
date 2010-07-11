@@ -46,10 +46,10 @@ declare variable $file-prefix as xs:string := '';
 
 (:
  : The default language to fetch phrases from.  Note that 
- : xdmp:get-session-field is useful here.
+ : http session field is useful here.
  :
  : eg: 'en'
- : eg: xdmp:get-session-field('lang', 'en')
+ : eg: processor:http-sessionp-param('lang', 'en')
  :)
 declare variable $default-lang as xs:string := 'en';
 

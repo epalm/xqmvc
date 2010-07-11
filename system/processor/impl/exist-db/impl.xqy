@@ -7,6 +7,7 @@ import module namespace map = "http://scholarsportal.info/xqmvc/system/map" at "
 declare namespace datetime = "http://exist-db.org/xquery/datetime";
 declare namespace request = "http://exist-db.org/xquery/request";
 declare namespace response = "http://exist-db.org/xquery/response";
+declare namespace session = "http://exist-db.org/xquery/session";
 declare namespace system = "http://exist-db.org/xquery/system";
 declare namespace util = "http://exist-db.org/xquery/util";
 
@@ -58,12 +59,25 @@ declare function impl:http-request-param-names() as xs:string*
 
 declare function impl:http-request-param($param-name as xs:string, $default-value as xs:string*) as xs:string*
 {
-    xdmp:get-request-field($param-name, $default-value)
+    request:get-parameter($param-name, $default-value)
 };
 
 declare function impl:http-request-param($param-name as xs:string) as xs:string*
 {
-    impl:http-request-param($param-name, ())
+    request:get-parameter($param-name, ())
+};
+
+declare function impl:http-session-param($param-name as xs:string, $default-value as item()*) as item()*
+{
+    let $session-param := session:get-attribute($param-name) return
+        if(empty($session-param))return
+        (
+            $default-value
+        )
+        else
+        (
+            $session-param
+        )
 };
 
 declare function impl:log($log-message as xs:string) as empty()

@@ -1,4 +1,1 @@
-1) Need to replace xdmp:set with some implementation agnostic code
-SEE -  plugins/langedit/models/lang-model.xqy
-
-2) Consider URL-Rewritting, works for MarkLogic, will probably need to be changed for eXist-db and abstracted out. see xqmvc.xqy link() functions
+1) Consider URL-Rewritting, works for MarkLogic, will probably need to be changed for eXist-db and abstracted out. see xqmvc.xqy link() functions

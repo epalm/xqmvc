@@ -98,7 +98,7 @@ as element(span)
  :
  : Tokens work the same as this:text(...)
  :
- : The text will be xdmp:unquote'd, meaning, for example, phrases with 
+ : The text will be unquote'd, meaning, for example, phrases with 
  : <b>bold</b> tags will be properly displayed in a browser.  YOU MUST ENSURE
  : THAT THE PHRASE CONTAINS VALID XML, IF ANY, otherwise all bets are off.
  :
