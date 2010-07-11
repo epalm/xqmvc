@@ -21,7 +21,7 @@ declare function impl:execute-module-function($module-namespace as xs:anyURI, $c
     let $import-declaration := fn:concat(
         'import module namespace pfx = ',
         '"', $module-namespace,'" at ',
-        '"', $controller-file, '";'
+        '"', impl:_uri_to_db_uri($controller-file), '";'
     ),
     $function-call := fn:concat('pfx:', $function-name, '()') return
 
