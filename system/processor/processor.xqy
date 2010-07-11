@@ -83,7 +83,7 @@ declare function processor:store($document-uri as xs:anyURI, $root as node()) as
 
 declare function processor:delete($document-uri as xs:anyURI) as empty()
 {
-    impl:document-delete($document-uri)
+    impl:delete($document-uri)
 };
 
 declare function processor:doc-available($document-uri as xs:string?) as xs:boolean

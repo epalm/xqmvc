@@ -21,36 +21,36 @@ xquery version "1.0";
  : views and templates, and provides basic linking and querystring building.
  :)
 module namespace xqmvc = "http://scholarsportal.info/xqmvc/core";
+
 import module namespace xqmvc-conf = "http://scholarsportal.info/xqmvc/config" at "../application/config/config.xqy";
 import module namespace map = "http://scholarsportal.info/xqmvc/system/map" at "map.xqy";
 import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "processor/processor.xqy";
+
 declare namespace xqmvc-ctrlr = "http://scholarsportal.info/xqmvc/controller";
 
-declare variable $controller-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/controllers');
-declare variable $view-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/views');
-declare variable $template-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/templates');
-declare variable $plugin-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins');
+declare variable $xqmvc:controller-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/controllers');
+declare variable $xqmvc:view-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/views');
+declare variable $xqmvc:template-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/templates');
+declare variable $xqmvc:plugin-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins');
 
-declare variable $resource-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/resources');
-declare variable $plugin-resource-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins/', current-plugin(), '/resources');
-declare variable $library-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/libraries');
-declare variable $plugin-library-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins/', current-plugin(), '/libraries');
+declare variable $xqmvc:resource-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/resources');
+declare variable $xqmvc:plugin-resource-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins/', current-plugin(), '/resources');
+declare variable $xqmvc:library-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/libraries');
+declare variable $xqmvc:plugin-library-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins/', current-plugin(), '/libraries');
 
-declare variable $doctype-html-4.01-strict :=       '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
-declare variable $doctype-html-4.01-transitional := '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-declare variable $doctype-html-4.01-frameset :=     '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">';
-declare variable $doctype-xhtml-1.0-strict :=       '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
-declare variable $doctype-xhtml-1.0-transitional := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
-declare variable $doctype-xhtml-1.0-frameset :=     '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">';
-declare variable $doctype-xhtml-1.1 :=              '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
+declare variable $xqmvc:doctype-html-4.01-strict :=       '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
+declare variable $xqmvc:doctype-html-4.01-transitional := '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+declare variable $xqmvc:doctype-html-4.01-frameset :=     '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">';
+declare variable $xqmvc:doctype-xhtml-1.0-strict :=       '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+declare variable $xqmvc:doctype-xhtml-1.0-transitional := '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+declare variable $xqmvc:doctype-xhtml-1.0-frameset :=     '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">';
+declare variable $xqmvc:doctype-xhtml-1.1 :=              '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
 
 (:~
  : Loads a controller, and executes a zero-argument function within that 
  : controller.
  :)
-declare function _controller($controller-file as xs:string,
-    $function as xs:string)
-as item()*
+declare function xqmvc:_controller($controller-file as xs:string, $function as xs:string) as item()*
 {
     if (fn:starts-with($function, '_')) then
     ()
@@ -65,28 +65,16 @@ declare function get-namespace-for-prefix($prefix as xs:string) as xs:anyURI?
     fn:namespace-uri-from-QName(xs:QName(fn:concat($prefix, ":null")))
 };
 
-declare function controller($controller as xs:string, $function as xs:string)
-as item()*
+declare function xqmvc:controller($controller as xs:string, $function as xs:string) as item()*
 {
-    let $controller-file := fn:concat($controller-dir, '/', $controller, '.xqy')
-    return
-        _controller(
-            $controller-file,
-            $function
-        )
+    let $controller-file := fn:concat($xqvc:controller-dir, '/', $controller, '.xqy') return
+        xqmvc:_controller($controller-file, $function)
 };
 
-declare function plugin-controller($plugin as xs:string, 
-    $controller as xs:string, $function as xs:string)
-as item()*
+declare function plugin-controller($plugin as xs:string, $controller as xs:string, $function as xs:string) as item()*
 {
-    let $controller-file := fn:concat($plugin-dir, '/', $plugin, 
-        '/controllers/', $controller, '.xqy')
-    return
-        _controller(
-            $controller-file,
-            $function
-        )
+    let $controller-file := fn:concat($xqvc:plugin-dir, '/', $plugin, '/controllers/', $controller, '.xqy') return
+        xqvc:_controller($controller-file, $function)
 };
 
 (:~
@@ -95,40 +83,31 @@ as item()*
  : Optionally accepts a sequence of key-value pairs to use and/or display within
  : the view.  This sequence must contain an even number of items.
  :)
-declare function _view($view-file as xs:string, $pairs as item()*)
-as item()*
+declare function xqmvc:_view($view-file as xs:string, $pairs as item()*) as item()*
 {
     processor:execute($view-file, map:sequence-to-map($pairs))
 };
 
-declare function view($view as xs:string, $pairs as item()*)
-as item()*
+declare function view($view as xs:string, $pairs as item()*) as item()*
 {
-    let $view-file := fn:concat($view-dir, '/', $view, '.xqy')
-    return
-        _view($view-file, $pairs)
+    let $view-file := fn:concat($xqvc:view-dir, '/', $view, '.xqy') return
+        xqmvc:_view($view-file, $pairs)
 };
 
-declare function view($view as xs:string)
-as item()*
+declare function xqmvc:view($view as xs:string) as item()*
 {
-    view($view, ())
+    xqmvc:view($view, ())
 };
 
-declare function plugin-view($plugin as xs:string, $view as xs:string, 
-    $pairs as item()*)
-as item()*
+declare function xqmvc:plugin-view($plugin as xs:string, $view as xs:string, $pairs as item()*) as item()*
 {
-    let $view-file := fn:concat($plugin-dir, '/', $plugin, '/views/', $view, 
-        '.xqy')
-    return
-        _view($view-file, $pairs)
+    let $view-file := fn:concat($xqvc:plugin-dir, '/', $plugin, '/views/', $view, '.xqy') return
+        xqmvc:_view($view-file, $pairs)
 };
 
-declare function plugin-view($plugin as xs:string, $view as xs:string)
-as item()*
+declare function xqmvc:plugin-view($plugin as xs:string, $view as xs:string) as item()*
 {
-    plugin-view($plugin, $view, ())
+    xqmvc:plugin-view($plugin, $view, ())
 };
 
 (:~
@@ -138,46 +117,32 @@ as item()*
  : content within the template.  This sequence must contain an even number of 
  : items.
  :)
-declare function _template($template-file as xs:string, $pairs as item()*)
-as item()*
+declare function xqmvc:_template($template-file as xs:string, $pairs as item()*) as item()*
 {
-    _view($template-file, $pairs)
+    xqmvc:_view($template-file, $pairs)
 };
 
-declare function template($template as xs:string, $pairs as item()*)
-as item()*
+declare function xqmvc:template($template as xs:string, $pairs as item()*) as item()*
 {
-    let $template-file := fn:concat($template-dir, '/', $template, '.xqy')
+    let $template-file := fn:concat($xqvc:template-dir, '/', $template, '.xqy') return
+        xqmvc:_template($template-file, $pairs)
+};
+
+declare function xqmvc:template($template as xs:string) as item()*
+{
+    xqmvc:template($template, ())
+};
+
+declare function xqmvc:plugin-template($plugin as xs:string, $template as xs:string, $pairs as item()*) as item()*
+{
+    let $template-file := fn:concat($xqvc:plugin-dir, '/', $plugin, '/templates/', $template, '.xqy')
     return
-        _template(
-            $template-file,
-            $pairs
-        )
+        xqmvc:_template($template-file, $pairs)
 };
 
-declare function template($template as xs:string)
-as item()*
+declare function xqmvc:plugin-template($plugin as xs:string, $template as xs:string) as item()*
 {
-    template($template, ())
-};
-
-declare function plugin-template($plugin as xs:string, 
-    $template as xs:string, $pairs as item()*)
-as item()*
-{
-    let $template-file := fn:concat($plugin-dir, '/', $plugin, '/templates/',
-        $template, '.xqy')
-    return
-        _template(
-            $template-file,
-            $pairs
-        )
-};
-
-declare function plugin-template($plugin as xs:string, $template as xs:string)
-as item()*
-{
-    plugin-template($plugin, $template, ())
+    xqmvc:plugin-template($plugin, $template, ())
 };
 
 (:~
@@ -190,9 +155,7 @@ as item()*
  : Optionally accepts a sequence of paired items to append as a query string.  
  : This sequence must contain an even number of items.
  :)
-declare function _link($plugin as xs:string?, $controller as xs:string, 
-    $function as xs:string, $querystring-pairs as item()*)
-as xs:string
+declare function xqmvc:_link($plugin as xs:string?, $controller as xs:string, $function as xs:string, $querystring-pairs as item()*) as xs:string
 {
     fn:concat(
         
@@ -219,35 +182,28 @@ as xs:string
                 if ($querystring-pairs) then '&amp;' else ()
             )
         ,
-        querystring-join($querystring-pairs)
+        xqmvc:querystring-join($querystring-pairs)
     )
 };
 
-declare function link($controller as xs:string, $function as xs:string, 
-    $querystring-pairs as item()*)
-as xs:string
+declare function xqmvc:link($controller as xs:string, $function as xs:string, $querystring-pairs as item()*) as xs:string
 {
-    _link((), $controller, $function, $querystring-pairs)
+    xqmvc:_link((), $controller, $function, $querystring-pairs)
 };
 
-declare function link($controller as xs:string, $function as xs:string)
-as xs:string
+declare function xqmvc:link($controller as xs:string, $function as xs:string) as xs:string
 {
-    link($controller, $function, ())
+    xqmvc:link($controller, $function, ())
 };
 
-declare function plugin-link($plugin as xs:string, $controller as xs:string, 
-    $function as xs:string, $querystring-pairs as item()*)
-as xs:string
+declare function xqmvc:plugin-link($plugin as xs:string, $controller as xs:string, $function as xs:string, $querystring-pairs as item()*) as xs:string
 {
-    _link($plugin, $controller, $function, $querystring-pairs)
+    xqmvc:_link($plugin, $controller, $function, $querystring-pairs)
 };
 
-declare function plugin-link($plugin as xs:string, $controller as xs:string, 
-    $function as xs:string)
-as xs:string
+declare function xqmvc:plugin-link($plugin as xs:string, $controller as xs:string,  $function as xs:string) as xs:string
 {
-    plugin-link($plugin, $controller, $function, ())
+    xqmvc:plugin-link($plugin, $controller, $function, ())
 };
 
 (:~
@@ -255,13 +211,11 @@ as xs:string
  : action attribute, or a set of hidden <input> elements, for forms with 
  : method="get" 
  :)
-declare function _formlink($plugin as xs:string?, $controller as xs:string,
-    $function as xs:string)
-as item()*
+declare function xqmvc:_formlink($plugin as xs:string?, $controller as xs:string, $function as xs:string) as item()*
 {
     if ($xqmvc-conf:url-rewrite) then (
     
-        attribute action { _link($plugin, $controller, $function, ()) }
+        attribute action { xqmvc:_link($plugin, $controller, $function, ()) }
         
     ) else (
         
@@ -290,17 +244,14 @@ as item()*
     )
 };
 
-declare function formlink($controller as xs:string, $function as xs:string)
-as item()*
+declare function xqmvc:formlink($controller as xs:string, $function as xs:string) as item()*
 {
-    _formlink((), $controller, $function)
+    xqmvc:_formlink((), $controller, $function)
 };
 
-declare function plugin-formlink($plugin as xs:string, 
-    $controller as xs:string, $function as xs:string)
-as item()*
+declare function xqmvc:plugin-formlink($plugin as xs:string, $controller as xs:string, $function as xs:string) as item()*
 {
-    _formlink($plugin, $controller, $function)
+    xqmvc:_formlink($plugin, $controller, $function)
 };
 
 (:~
@@ -309,8 +260,7 @@ as item()*
  : which have updated some data, and wish to redirect to another controller / 
  : function.
  :)
-declare function redirect($location as xs:string)
-as empty-sequence()
+declare function xqmvc:redirect($location as xs:string) as empty-sequence()
 {
     processor:http-response-redirect($location)
 };
@@ -321,8 +271,7 @@ as empty-sequence()
  :
  : Ex: querystring-join(('x', '123', 'y', '456')) will produce x=123&y=546
  :)
-declare function querystring-join($pairs as item()*)
-as xs:string
+declare function xqmvc:querystring-join($pairs as item()*) as xs:string
 {
     fn:string-join(
         for $i in (1 to fn:count($pairs))[. mod 2 ne 0]
@@ -336,19 +285,18 @@ as xs:string
  :
  : Ex: querystring-split('x=123&y=546') will produce ('x', '123', 'y', '456')
  :)
-declare function querystring-split($querystring as xs:string*)
-as xs:string*
+declare function xqmvc:querystring-split($querystring as xs:string*) as xs:string*
 {
     for $pair in fn:tokenize($querystring, '&amp;')
-    let $key-value := fn:tokenize($pair, '=')
-    return ($key-value[1], $key-value[2])
+        let $key-value := fn:tokenize($pair, '=')
+        return
+            ($key-value[1], $key-value[2])
 };
 
 (:~
  : The controller being loaded by the current request. 
  :)
-declare function current-controller()
-as xs:string
+declare function xqmvc:current-controller() as xs:string
 {
     processor:http-request-param($xqmvc-conf:controller-querystring-field, $xqmvc-conf:default-controller)
 };
@@ -356,8 +304,7 @@ as xs:string
 (:~
  : The function being executed by the current request. 
  :)
-declare function current-function()
-as xs:string
+declare function xqmvc:current-function() as xs:string
 {
     processor:http-request-param($xqmvc-conf:function-querystring-field, 'index')
 };
@@ -365,8 +312,7 @@ as xs:string
 (:~
  : The plugin being used by the current request. 
  :)
-declare function current-plugin()
-as xs:string
+declare function xqmvc:current-plugin() as xs:string
 {
     processor:http-request-param($xqmvc-conf:plugin-querystring-field, '')
 };
@@ -374,8 +320,7 @@ as xs:string
 (:~
  : Recursively applies a namespace to an xml structure.
  :)
-declare function apply-namespace($node as node(), $namespace as xs:string)
-as node()*
+declare function xqmvc:apply-namespace($node as node(), $namespace as xs:string) as node()*
 {
     typeswitch ($node)
         case element() return
@@ -389,7 +334,7 @@ as node()*
 (:~
  : Send some information to the log about what we're executing.
  :)
-declare function log-status()
+declare function xqmvc:log-status()
 {
     processor:log(
         fn:concat(
