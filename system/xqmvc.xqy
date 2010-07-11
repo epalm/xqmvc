@@ -34,9 +34,9 @@ declare variable $xqmvc:template-dir as xs:string := fn:concat($xqmvc-conf:app-r
 declare variable $xqmvc:plugin-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins');
 
 declare variable $xqmvc:resource-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/resources');
-declare variable $xqmvc:plugin-resource-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins/', current-plugin(), '/resources');
+declare variable $xqmvc:plugin-resource-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins/', xqmvc:current-plugin(), '/resources');
 declare variable $xqmvc:library-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/libraries');
-declare variable $xqmvc:plugin-library-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins/', current-plugin(), '/libraries');
+declare variable $xqmvc:plugin-library-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins/', xqmvc:current-plugin(), '/libraries');
 
 declare variable $xqmvc:doctype-html-4.01-strict :=       '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
 declare variable $xqmvc:doctype-html-4.01-transitional := '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
@@ -56,25 +56,25 @@ declare function xqmvc:_controller($controller-file as xs:string, $function as x
     ()
     else
     (
-        processor:execute-module-function(get-namespace-for-prefix("xqmvc-ctrlr"), xs:anyURI($controller-file), $function)
+        processor:execute-module-function(xqmvc:get-namespace-for-prefix("xqmvc-ctrlr"), xs:anyURI($controller-file), $function)
     )
 };
 
-declare function get-namespace-for-prefix($prefix as xs:string) as xs:anyURI?
+declare function xqmvc:get-namespace-for-prefix($prefix as xs:string) as xs:anyURI?
 {
     fn:namespace-uri-from-QName(xs:QName(fn:concat($prefix, ":null")))
 };
 
 declare function xqmvc:controller($controller as xs:string, $function as xs:string) as item()*
 {
-    let $controller-file := fn:concat($xqvc:controller-dir, '/', $controller, '.xqy') return
+    let $controller-file := fn:concat($xqmvc:controller-dir, '/', $controller, '.xqy') return
         xqmvc:_controller($controller-file, $function)
 };
 
-declare function plugin-controller($plugin as xs:string, $controller as xs:string, $function as xs:string) as item()*
+declare function xqmvc:plugin-controller($plugin as xs:string, $controller as xs:string, $function as xs:string) as item()*
 {
-    let $controller-file := fn:concat($xqvc:plugin-dir, '/', $plugin, '/controllers/', $controller, '.xqy') return
-        xqvc:_controller($controller-file, $function)
+    let $controller-file := fn:concat($xqmvc:plugin-dir, '/', $plugin, '/controllers/', $controller, '.xqy') return
+        xqmvc:_controller($controller-file, $function)
 };
 
 (:~
@@ -88,7 +88,7 @@ declare function xqmvc:_view($view-file as xs:string, $pairs as item()*) as item
     processor:execute($view-file, map:sequence-to-map($pairs))
 };
 
-declare function view($view as xs:string, $pairs as item()*) as item()*
+declare function xqmvc:view($view as xs:string, $pairs as item()*) as item()*
 {
     let $view-file := fn:concat($xqvc:view-dir, '/', $view, '.xqy') return
         xqmvc:_view($view-file, $pairs)
@@ -326,7 +326,7 @@ declare function xqmvc:apply-namespace($node as node(), $namespace as xs:string)
         case element() return
             element { fn:QName($namespace, fn:name($node)) } {
                 $node/@*,
-                for $n in $node/node() return apply-namespace($n, $namespace)
+                for $n in $node/node() return xqmvc:apply-namespace($n, $namespace)
             }
         default return $node
 };
@@ -339,9 +339,9 @@ declare function xqmvc:log-status()
     processor:log(
         fn:concat(
             'app-root=[',     $xqmvc-conf:app-root    , '] ',
-            'plugin=[',     current-plugin()        , '] ',
-            'controller=[', current-controller()    , '] ',
-            'function=[',     current-function()        , '] '
+            'plugin=[',     xqmvc:current-plugin()        , '] ',
+            'controller=[', xqmvc:current-controller()    , '] ',
+            'function=[',     xqmvc:current-function()        , '] '
         )
     )
 };
