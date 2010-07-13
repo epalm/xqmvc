@@ -90,7 +90,7 @@ declare function xqmvc:_view($view-file as xs:string, $pairs as item()*) as item
 
 declare function xqmvc:view($view as xs:string, $pairs as item()*) as item()*
 {
-    let $view-file := fn:concat($xqvc:view-dir, '/', $view, '.xqy') return
+    let $view-file := fn:concat($xqmvc:view-dir, '/', $view, '.xqy') return
         xqmvc:_view($view-file, $pairs)
 };
 
@@ -101,7 +101,7 @@ declare function xqmvc:view($view as xs:string) as item()*
 
 declare function xqmvc:plugin-view($plugin as xs:string, $view as xs:string, $pairs as item()*) as item()*
 {
-    let $view-file := fn:concat($xqvc:plugin-dir, '/', $plugin, '/views/', $view, '.xqy') return
+    let $view-file := fn:concat($xqmvc:plugin-dir, '/', $plugin, '/views/', $view, '.xqy') return
         xqmvc:_view($view-file, $pairs)
 };
 
@@ -124,7 +124,7 @@ declare function xqmvc:_template($template-file as xs:string, $pairs as item()*)
 
 declare function xqmvc:template($template as xs:string, $pairs as item()*) as item()*
 {
-    let $template-file := fn:concat($xqvc:template-dir, '/', $template, '.xqy') return
+    let $template-file := fn:concat($xqmvc:template-dir, '/', $template, '.xqy') return
         xqmvc:_template($template-file, $pairs)
 };
 
@@ -135,7 +135,7 @@ declare function xqmvc:template($template as xs:string) as item()*
 
 declare function xqmvc:plugin-template($plugin as xs:string, $template as xs:string, $pairs as item()*) as item()*
 {
-    let $template-file := fn:concat($xqvc:plugin-dir, '/', $plugin, '/templates/', $template, '.xqy')
+    let $template-file := fn:concat($xqmvc:plugin-dir, '/', $plugin, '/templates/', $template, '.xqy')
     return
         xqmvc:_template($template-file, $pairs)
 };
