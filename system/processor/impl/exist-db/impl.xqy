@@ -32,7 +32,8 @@ declare function impl:execute($view-file as xs:anyURI, $map as element(map)) {
 
     (: requires eXist 1.4.1+ :)
     
-    util:eval($view-file, 
+    util:eval($view-file,
+        false(),
         (xs:QName("data"), $map)
     )
 };
