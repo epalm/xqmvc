@@ -138,3 +138,7 @@ declare function impl:parse-with-fixes($unparsed as xs:string) as node()+
 {
     xdmp:unquote($unparsed, "", "repair-full")
 };
+
+declare function impl:get-server-base-uri() as xs:anyURI {
+    xs:anyURI()
+};

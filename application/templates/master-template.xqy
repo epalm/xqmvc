@@ -8,12 +8,12 @@ declare variable $data as element(map) external;
 
 processor:http-response-content-type('text/html'),
 
-$xqmvc:doctype-xhtml-1.1,
+processor:response-set-document-type($xqmvc:doctype-xhtml-1.1),
 
 <html>
     <head>
         <title>{ map:get($data, 'browsertitle') }</title>
-        <link rel="stylesheet" type="text/css" media="screen" href="{ $xqmvc:resource-dir }/css/style.css"/>
+        <link rel="stylesheet" type="text/css" media="screen" href="{ xqmvc:resource-dir() }/css/style.css"/>
     </head>
     <body>
         <div id="hd">

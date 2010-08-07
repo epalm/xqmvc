@@ -33,7 +33,6 @@ declare variable $xqmvc:view-dir as xs:string := fn:concat($xqmvc-conf:app-root,
 declare variable $xqmvc:template-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/templates');
 declare variable $xqmvc:plugin-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins');
 
-declare variable $xqmvc:resource-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/resources');
 declare variable $xqmvc:plugin-resource-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins/', xqmvc:current-plugin(), '/resources');
 declare variable $xqmvc:library-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/application/libraries');
 declare variable $xqmvc:plugin-library-dir as xs:string := fn:concat($xqmvc-conf:app-root, '/plugins/', xqmvc:current-plugin(), '/libraries');
@@ -159,7 +158,7 @@ declare function xqmvc:_link($plugin as xs:string?, $controller as xs:string, $f
 {
     fn:concat(
         
-        $xqmvc-conf:app-root,
+        fn:concat(processor:get-server-base-uri(), $xqmvc-conf:app-root),
         
         if ($xqmvc-conf:url-rewrite) then
             fn:concat(
@@ -189,6 +188,11 @@ declare function xqmvc:_link($plugin as xs:string?, $controller as xs:string, $f
 declare function xqmvc:link($controller as xs:string, $function as xs:string, $querystring-pairs as item()*) as xs:string
 {
     xqmvc:_link((), $controller, $function, $querystring-pairs)
+};
+
+declare function xqmvc:resource-dir() as xs:string
+{
+    fn:concat(processor:get-server-base-uri(), $xqmvc-conf:app-root, '/application/resources')
 };
 
 declare function xqmvc:link($controller as xs:string, $function as xs:string) as xs:string

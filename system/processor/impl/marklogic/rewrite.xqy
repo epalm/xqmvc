@@ -28,7 +28,7 @@ import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "xqmv
 
 let $url := xdmp:get-request-url()
 return
-if (matches($url, concat("^", $xqmvc:resource-dir)) 
+if (matches($url, concat("^", xqmvc:resource-dir()))
             or matches($url, concat("^", $xqmvc:library-dir))) then
         $url
     else

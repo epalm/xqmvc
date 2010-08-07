@@ -23,7 +23,7 @@ declare variable $data as element(map) external;
             <td>Platform:</td><td>{ map:get($data, 'plat') }</td>
         </tr>
         <tr>
-            <td>MarkLogic:</td><td>{ map:get($data, 'vers') }</td>
+            <td>Version:</td><td>{ map:get($data, 'vers') }</td>
         </tr>
     </table>
     <p><a href="{ xqmvc:link('user', 'list') }">User Manager example &#187;</a></p>

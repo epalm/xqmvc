@@ -129,3 +129,7 @@ declare function processor:format-dateTime-for-human($dateTime as xs:dateTime) a
 declare function processor:parse-with-fixes($unparsed as xs:string) as node()+ {
     impl:parse-with-fixes($unparsed)
 };
+
+declare function processor:get-server-base-uri() as xs:anyURI {
+    impl:get-server-base-uri()
+};
