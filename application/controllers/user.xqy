@@ -30,7 +30,7 @@ declare function xqmvc-controller:index() as item()*
 declare function xqmvc-controller:list() as item()*
 {
     if (fn:not(user:db-exists())) then
-        _xqmvc-controller:request-db-creation()
+        xqmvc-controller:_request-db-creation()
     else
         xqmvc:template('master-template', (
             'browsertitle', 'User Manager',
@@ -41,7 +41,7 @@ declare function xqmvc-controller:list() as item()*
 declare function xqmvc-controller:view() as item()*
 {
     if (fn:not(user:db-exists())) then
-        _xqmvc-controller:request-db-creation()
+        xqmvc-controller:_request-db-creation()
     else
         let $id := processor:http-request-param("id")
         return

@@ -4,24 +4,24 @@ module namespace user = "http://user.manager.com";
 
 import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../system/processor/processor.xqy";
 
-declare variable $db := '/users.xml';
+declare variable $user:db := '/users.xml';
 
 declare function user:db-exists()
 {
-    processor:doc-available($db) and fn:exists(processor:doc($db)/users)
+    processor:doc-available($user:db) and fn:exists(processor:doc($user:db)/users)
 };
 
 declare function user:db-create()
 {
     if (fn:not(user:db-exists())) then
     (
-        processor:store($db, <users/>)
+        processor:store($user:db, <users/>)
     )else()
 };
 
 declare function user:list() as element(user)*
 {
-    processor:doc($db)/users/user
+    processor:doc($user:db)/users/user
 };
 
 declare function user:create($email as xs:string, $first-name as xs:string, $last-name as xs:string)
@@ -38,7 +38,7 @@ declare function user:create($email as xs:string, $first-name as xs:string, $las
                 <created>{ fn:current-dateTime() }</created>
             </user>
         return
-            processor:node-insert-child(processor:doc($db)/users, $user)
+            processor:node-insert-child(processor:doc($user:db)/users, $user)
     )
 };
 
@@ -48,7 +48,7 @@ declare function user:get($id as xs:string)
     ()
     else
     (
-        processor:doc($db)/users/user[@id eq $id]
+        processor:doc($user:db)/users/user[@id eq $id]
     )
 };
 
@@ -67,9 +67,9 @@ declare function user:save($id as xs:string, $email as xs:string, $first-name as
         ()
         else
         (
-            processor:node-replace(processor:doc($db)/users/user[@id eq $id]/email, <email edit="yes">{ $email }</email>),
-            processor:node-replace(processor:doc($db)/users/user[@id eq $id]/first-name, <first-name edit="yes">{ $first-name }</first-name>),
-            processor:node-replace(processor:doc($db)/users/user[@id eq $id]/last-name, <last-name edit="yes">{ $last-name }</last-name>)
+            processor:node-replace(processor:doc($user:db)/users/user[@id eq $id]/email, <email edit="yes">{ $email }</email>),
+            processor:node-replace(processor:doc($user:db)/users/user[@id eq $id]/first-name, <first-name edit="yes">{ $first-name }</first-name>),
+            processor:node-replace(processor:doc($user:db)/users/user[@id eq $id]/last-name, <last-name edit="yes">{ $last-name }</last-name>)
         )
     )
 };
@@ -84,7 +84,7 @@ declare function user:delete($id as xs:string)
         ()
         else
         (
-            processor:node-delete(processor:doc($db)/users/user[@id eq $id])
+            processor:node-delete(processor:doc($user:db)/users/user[@id eq $id])
         )
     )
 };
