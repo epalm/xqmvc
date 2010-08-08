@@ -1,4 +1,4 @@
-xdmpxquery version "1.0";
+xquery version "1.0";
 
 (:
  : Copyright 2009 Ontario Council of University Libraries
@@ -240,7 +240,7 @@ declare function this:strip-left($str as xs:string, $chars as xs:string*) as xs:
     else $str
 };
 
-declare private function this:strip-right($str as xs:string, $chars as xs:string*) as xs:string
+declare function this:strip-right($str as xs:string, $chars as xs:string*) as xs:string
 {
     if (this:char-at($str, fn:string-length($str)) = $chars) then
         this:strip-right(fn:substring($str, 1, fn:string-length($str)-1), $chars)

@@ -8,7 +8,7 @@ declare variable $data as element(map) external;
 
 processor:http-response-content-type('application/xhtml+xml'),
 
-processor:http-response-set-document-type($xqmvc:doctype-xhtml-1.1),
+processor:response-set-document-type($xqmvc:doctype-xhtml-1.1),
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
