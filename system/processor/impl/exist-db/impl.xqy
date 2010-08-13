@@ -14,6 +14,7 @@ declare variable $impl:log-level as xs:string := "info";
 
 declare function impl:execute-module-function($module-namespace as xs:anyURI, $controller-file as xs:anyURI, $function-name as xs:string) as item()* {
     
+    (:
     let $import-declaration := fn:concat(
         'import module namespace pfx = ',
         '"', $module-namespace,'" at ',
@@ -24,6 +25,13 @@ declare function impl:execute-module-function($module-namespace as xs:anyURI, $c
         util:eval(
             fn:concat($import-declaration, $function-call)
         )
+        :)
+        
+      
+         let $template := util:import-module($module-namespace, "pfx",
+            xs:anyURI(fn:concat("xmldb:exist://", $controller-file))) return
+
+       util:eval(fn:concat('pfx:', $function-name, '()'))
 };
 
 declare function impl:execute($view-file as xs:anyURI, $map as element(map)) {
