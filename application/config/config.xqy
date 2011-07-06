@@ -27,6 +27,7 @@ module namespace xqmvc-conf = "http://scholarsportal.info/xqmvc/config";
  : 
  : eg: This web app is in a subdir named 'webapp' of the App-Server: '/webapp'
  : eg: This web app is in the root of the App-Server (leave blank):  ''
+ : eg: This web app is in a collection inside the eXist-db database '/db/xqmvc'
  :)
 declare variable $xqmvc-conf:app-root as xs:string := '';
 
