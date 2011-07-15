@@ -2,6 +2,8 @@ xquery version "1.0";
 
 module namespace impl = "http://scholarsportal.info/xqmvc/system/processor/impl/exist-db";
 
+import module namespace xqmvc-conf = "http://scholarsportal.info/xqmvc/config" at "../../../../application/config/config.xqy";
+
 declare namespace datetime = "http://exist-db.org/xquery/datetime";
 declare namespace request = "http://exist-db.org/xquery/request";
 declare namespace response = "http://exist-db.org/xquery/response";
@@ -25,13 +27,12 @@ declare function impl:execute-module-function($module-namespace as xs:anyURI, $c
         util:eval(
             fn:concat($import-declaration, $function-call)
         )
-        :)
+    :)
         
-      
          let $template := util:import-module($module-namespace, "pfx",
             xs:anyURI(fn:concat("xmldb:exist://", $controller-file))) return
-
-       util:eval(fn:concat('pfx:', $function-name, '()'))
+    
+       util:eval(fn:concat('pfx:', $function-name, '()'), false())
 };
 
 declare function impl:execute($view-file as xs:anyURI, $map as element(map)) {
@@ -62,19 +63,14 @@ declare function impl:http-response-content-type($content-type as xs:string) as 
 
 declare function impl:response-set-document-type($doctype as xs:string) {
 
-    ()
     (: TODO need to fix how serialization options are set :)
-
-(:
+    let $doctype-public := replace(tokenize($doctype, '"')[2], " ", "&#160;"),
+    $doctype-system := tokenize($doctype, '"')[4] return
+    
     if(util:get-option("exist:serialize"))then
-    (
-        util:declare-option("exist:serialize", fn:concat("doctype-public=", replace(tokenize($doctype, '"')[2], " ", "&#160;"), " doctype-system=", tokenize($doctype, '"')[4]))
-    )
+        util:declare-option("exist:serialize", fn:concat("media-type=text/html doctype-public=", $doctype-public, " doctype-system=", $doctype-system))
     else
-    (
-        util:declare-option("exist:serialize", fn:concat(util:get-option("exist:serialize"), " ", "doctype-public=", replace(tokenize($doctype, '"')[2], " ", "&#160;"), " doctype-system=", tokenize($doctype, '"')[4]))
-    )
-:)
+        util:declare-option("exist:serialize", fn:concat(util:get-option("exist:serialize"), " ", "media-type=text/html doctype-public=", $doctype-public, " doctype-system=", $doctype-system))
 };
 
 declare function impl:http-request-param-names() as xs:string*
@@ -96,13 +92,9 @@ declare function impl:http-session-param($param-name as xs:string, $default-valu
 {
     let $session-param := session:get-attribute($param-name) return
         if(empty($session-param))then
-        (
             $default-value
-        )
         else
-        (
             $session-param
-        )
 };
 
 declare function impl:log($log-message as xs:string) as empty()
@@ -152,7 +144,7 @@ declare function impl:doc-available($document-uri as xs:string?) as xs:boolean
     (:
     fn:doc-available(impl:_uri_to_db_uri($document-uri))
     :)
-    fn:doc-available($document-uri)
+    fn:doc-available(impl:_uri_to_db_uri($document-uri))
 };
 
 declare function impl:doc($document-uri as xs:string?) as node()?
@@ -201,24 +193,20 @@ declare function impl:parse-with-fixes($unparsed as xs:string) as node()+
     util:parse-html($unparsed)
 };
 
-
-(:
 declare function impl:_uri_to_db_uri($document-uri as xs:string) as xs:string {
     
-    let $db-document-uri := if(fn:not(fn:starts-with($document-uri, $impl:db-data-root))) then
-    (
-        if(fn:starts-with($document-uri, "/"))then
-        (
-            fn:concat($impl:db-data-root, $document-uri)
-        )
+    let $db-document-uri :=
+        if(fn:not(fn:starts-with($document-uri, $xqmvc-conf:app-root))) then
+            if(fn:starts-with($document-uri, "/"))then
+                fn:concat($xqmvc-conf:app-root, $document-uri)
+            else
+                fn:concat($xqmvc-conf:app-root, "/", $document-uri)
         else
-        (
-           fn:concat($impl:db-data-root, "/", $document-uri)
-        )
-    ) else($document-uri) return
+            $document-uri
+            
+    return
         $db-document-uri
 };
-:)
 
 declare function impl:_collection-path-from-uri($uri as xs:string) as xs:string
 {
