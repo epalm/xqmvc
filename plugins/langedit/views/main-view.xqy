@@ -99,7 +99,7 @@ declare variable $INPUT-MAX-SIZE as xs:integer := 50;
                                                     attribute class { 'key' }
                                                 }
                                             }</td>
-                                            <td>#160;=&#160;</td>
+                                            <td>&#160;=&#160;</td>
                                             <td>{
                                                 if (string-length($text) gt $INPUT-MAX-SIZE) then
                                                     element textarea {
