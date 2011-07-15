@@ -162,30 +162,20 @@ declare function xqmvc:_link($plugin as xs:string?, $controller as xs:string, $f
         
         if ($xqmvc-conf:url-rewrite) then
             fn:concat(
-                if(fn:not(fn:empty($plugin)))then
-                    ()
-                else
-                    fn:concat('/', $plugin),
-                    '/', $controller,
-                    '/', $function,
-                    $xqmvc-conf:url-suffix,
-                    if(fn:not(fn:empty($querystring-pairs)))then
-                        '?'
-                    else()
+                if(fn:empty($plugin))then () else fn:concat('/', $plugin),
+                '/', $controller,
+                '/', $function,
+                $xqmvc-conf:url-suffix,
+                if(fn:not(fn:empty($querystring-pairs)))then '?' else()
             )
         else
             fn:concat(
                 '/index.xqy?',
-                if (fn:not(fn:empty($plugin))) then
-                    ()
-                else
-                    fn:concat($xqmvc-conf:plugin-querystring-field, '=', $plugin, '&amp;'),
-                    $xqmvc-conf:controller-querystring-field, '=', $controller,
-                    '&amp;',
-                    $xqmvc-conf:function-querystring-field, '=', $function,
-                    if(fn:not(fn:empty($querystring-pairs)))then
-                        '&amp;'
-                    else()
+                if(fn:empty($plugin))then () else fn:concat($xqmvc-conf:plugin-querystring-field, '=', $plugin, '&amp;'),
+                $xqmvc-conf:controller-querystring-field, '=', $controller,
+                '&amp;',
+                $xqmvc-conf:function-querystring-field, '=', $function,
+                if(fn:not(fn:empty($querystring-pairs)))then '&amp;' else ()
             )
         ,
         xqmvc:querystring-join($querystring-pairs)
