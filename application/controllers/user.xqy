@@ -95,6 +95,7 @@ declare function xqmvc-controller:delete() as item()*
 declare function xqmvc-controller:_request-db-creation()
 {
     xqmvc:template('master-template', (
+        'browsertitle', 'User Manager - Missing db',
         'body', xqmvc:view('error-db-not-found', (
             'db', $user:db
         ))
