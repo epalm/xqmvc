@@ -5,7 +5,7 @@ import module namespace map = "http://scholarsportal.info/xqmvc/system/map" at "
 
 declare variable $data as element(map) external;
 
-<div>
+<div xmlns="http://www.w3.org/1999/xhtml">
     <p>Couldn't find document [{ map:get($data, 'db') }]</p>
     <form action="{ xqmvc:link('user', 'db-create') }" method="post">
         <p>

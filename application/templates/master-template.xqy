@@ -10,7 +10,7 @@ processor:http-response-content-type('text/html'),
 
 processor:response-set-document-type($xqmvc:doctype-xhtml-1.1),
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>{ map:get($data, 'browsertitle') }</title>
         <link rel="stylesheet" type="text/css" media="screen" href="{ xqmvc:resource-dir() }/css/style.css"/>

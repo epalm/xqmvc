@@ -5,7 +5,7 @@ import module namespace map = "http://scholarsportal.info/xqmvc/system/map" at "
 
 declare variable $data as element(map) external;
 
-<form action="{ xqmvc:link('user', 'create') }" method="post">
+<form xmlns="http://www.w3.org/1999/xhtml" action="{ xqmvc:link('user', 'create') }" method="post">
     <div>
         Email: <input type="text" name="email" value=""/>
         First Name: <input type="text" name="first-name" value=""/>

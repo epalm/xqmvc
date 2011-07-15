@@ -6,7 +6,7 @@ import module namespace map = "http://scholarsportal.info/xqmvc/system/map" at "
 
 declare variable $data as element(map) external;
 
-<div>
+<div xmlns="http://www.w3.org/1999/xhtml">
     { xqmvc:view('user-creation-form') }
     <table>
         <tr>

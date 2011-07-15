@@ -316,9 +316,9 @@ declare function xqmvc:current-function() as xs:string
 (:~
  : The plugin being used by the current request. 
  :)
-declare function xqmvc:current-plugin() as xs:string
+declare function xqmvc:current-plugin() as xs:string?
 {
-    processor:http-request-param($xqmvc-conf:plugin-querystring-field, '')
+    processor:http-request-param($xqmvc-conf:plugin-querystring-field, ())
 };
 
 (:~

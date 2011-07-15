@@ -19,7 +19,7 @@ as xs:string
     )
 };
 
-<div>
+<div xmlns="http://www.w3.org/1999/xhtml">
     <form action="{ xqmvc:link('user', 'save') }" method="post">
         <table>
             {

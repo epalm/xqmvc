@@ -52,13 +52,9 @@ declare function impl:http-response-redirect($location as xs:anyURI) as empty()
 
 declare function impl:http-response-content-type($content-type as xs:string) as empty() {
     if(util:get-option("exist:serialize"))then
-    (
-        util:declare-option("exist:serialize", fn:concat("media-type=", $content-type))
-    )
+        util:declare-option("exist:serialize", fn:concat(util:get-option("exist:serialize"), " ", "method=xhtml omit-xml-declaration=no media-type=", $content-type))
     else
-    (
-        util:declare-option("exist:serialize", fn:concat(util:get-option("exist:serialize"), " ", "media-type=", $content-type))
-    )   
+        util:declare-option("exist:serialize", fn:concat("method=xhtml omit-xml-declaration=no media-type=", $content-type))
 };
 
 declare function impl:response-set-document-type($doctype as xs:string) {
