@@ -36,7 +36,7 @@ declare function xqmvc-controller:index()
                 if (fn:not($lang)) then
                     xqmvc-controller:_not-specified()
                 
-                else if (fn:not(fn:doc-available($path))) then
+                else if (fn:not(processor:doc-available($path))) then
                     xqmvc-controller:_not-found($lang)
                 
                 else
