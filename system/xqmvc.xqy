@@ -325,7 +325,11 @@ declare function xqmvc:current-function() as xs:string
  :)
 declare function xqmvc:current-plugin() as xs:string?
 {
-    processor:http-request-param($xqmvc-conf:plugin-querystring-field, ())
+    let $plugin := processor:http-request-param($xqmvc-conf:plugin-querystring-field, ()) return
+        if($plugin eq "")then
+            ()
+        else
+            $plugin
 };
 
 (:~
