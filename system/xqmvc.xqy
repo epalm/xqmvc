@@ -51,7 +51,7 @@ declare variable $xqmvc:doctype-xhtml-1.1 :=              '<!DOCTYPE html PUBLIC
  :)
 declare function xqmvc:_controller($controller-file as xs:string, $function as xs:string) as item()*
 {
-    if (fn:starts-with($function, '_')) then
+    if(fn:starts-with($function, '_')) then
     ()
     else
     (
@@ -162,23 +162,30 @@ declare function xqmvc:_link($plugin as xs:string?, $controller as xs:string, $f
         
         if ($xqmvc-conf:url-rewrite) then
             fn:concat(
-                if (fn:not($plugin)) then ()
-                else fn:concat('/', $plugin),
-                '/', $controller,
-                '/', $function, 
-                $xqmvc-conf:url-suffix,
-                if ($querystring-pairs) then '?' else ()
+                if(fn:not(fn:empty($plugin)))then
+                    ()
+                else
+                    fn:concat('/', $plugin),
+                    '/', $controller,
+                    '/', $function,
+                    $xqmvc-conf:url-suffix,
+                    if(fn:not(fn:empty($querystring-pairs)))then
+                        '?'
+                    else()
             )
         else
             fn:concat(
                 '/index.xqy?',
-                if (fn:not($plugin)) then ()
-                else fn:concat($xqmvc-conf:plugin-querystring-field, '=', 
-                    $plugin, '&amp;'),
-                $xqmvc-conf:controller-querystring-field, '=', $controller,
-                '&amp;',
-                $xqmvc-conf:function-querystring-field, '=', $function,
-                if ($querystring-pairs) then '&amp;' else ()
+                if (fn:not(fn:empty($plugin))) then
+                    ()
+                else
+                    fn:concat($xqmvc-conf:plugin-querystring-field, '=', $plugin, '&amp;'),
+                    $xqmvc-conf:controller-querystring-field, '=', $controller,
+                    '&amp;',
+                    $xqmvc-conf:function-querystring-field, '=', $function,
+                    if(fn:not(fn:empty($querystring-pairs)))then
+                        '&amp;'
+                    else()
             )
         ,
         xqmvc:querystring-join($querystring-pairs)

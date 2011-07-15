@@ -136,10 +136,7 @@ declare function impl:doc-available($document-uri as xs:anyURI?) as xs:boolean
 
 declare function impl:doc($document-uri as xs:anyURI?) as node()?
 {
-    (:
     fn:doc(impl:_uri_to_db_uri($document-uri))
-    :)
-    fn:doc($document-uri)
 };
 
 declare function impl:directory($uri as xs:anyURI) as document-node()*
