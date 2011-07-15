@@ -4,7 +4,7 @@ module namespace user = "http://user.manager.com";
 
 import module namespace processor = "http://scholarsportal.info/xqmvc/system/processor" at "../../system/processor/processor.xqy";
 
-declare variable $user:db := '/users.xml';
+declare variable $user:db as xs:anyURI := xs:anyURI("/users.xml");
 
 declare function user:db-exists()
 {
@@ -13,10 +13,9 @@ declare function user:db-exists()
 
 declare function user:db-create()
 {
-    if (fn:not(user:db-exists())) then
-    (
+    if(fn:not(user:db-exists())) then
         processor:store($user:db, <users/>)
-    )else()
+    else()
 };
 
 declare function user:list() as element(user)*
@@ -29,7 +28,6 @@ declare function user:create($email as xs:string, $first-name as xs:string, $las
     if (fn:not(user:db-exists())) then
     ()
     else
-    (
         let $user :=
             <user id="{ processor:random() }">
                 <email edit="yes">{ $email }</email>
@@ -39,7 +37,6 @@ declare function user:create($email as xs:string, $first-name as xs:string, $las
             </user>
         return
             processor:node-insert-child(processor:doc($user:db)/users, $user)
-    )
 };
 
 declare function user:get($id as xs:string)
@@ -47,9 +44,7 @@ declare function user:get($id as xs:string)
     if (fn:not(user:db-exists())) then
     ()
     else
-    (
         processor:doc($user:db)/users/user[@id eq $id]
-    )
 };
 
 declare function user:exists($id as xs:string) as xs:boolean
@@ -62,7 +57,6 @@ declare function user:save($id as xs:string, $email as xs:string, $first-name as
     if (fn:not(user:db-exists())) then
     ()
     else
-    (
         if (fn:not(fn:exists($id))) then
         ()
         else
@@ -71,7 +65,6 @@ declare function user:save($id as xs:string, $email as xs:string, $first-name as
             processor:node-replace(processor:doc($user:db)/users/user[@id eq $id]/first-name, <first-name edit="yes">{ $first-name }</first-name>),
             processor:node-replace(processor:doc($user:db)/users/user[@id eq $id]/last-name, <last-name edit="yes">{ $last-name }</last-name>)
         )
-    )
 };
 
 declare function user:delete($id as xs:string)
@@ -79,12 +72,8 @@ declare function user:delete($id as xs:string)
     if (fn:not(user:db-exists())) then
     ()
     else
-    (
         if (fn:not(fn:exists($id))) then
         ()
         else
-        (
             processor:node-delete(processor:doc($user:db)/users/user[@id eq $id])
-        )
-    )
 };

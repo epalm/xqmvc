@@ -12,7 +12,6 @@ declare namespace system = "http://exist-db.org/xquery/system";
 declare namespace util = "http://exist-db.org/xquery/util";
 
 declare variable $impl:log-level as xs:string := "info";
-(: declare variable $impl:db-data-root := "/db"; :)
 
 declare function impl:execute-module-function($module-namespace as xs:anyURI, $controller-file as xs:anyURI, $function-name as xs:string) as item()* {
     
@@ -64,9 +63,9 @@ declare function impl:response-set-document-type($doctype as xs:string) {
     $doctype-system := tokenize($doctype, '"')[4] return
     
     if(util:get-option("exist:serialize"))then
-        util:declare-option("exist:serialize", fn:concat("media-type=text/html doctype-public=", $doctype-public, " doctype-system=", $doctype-system))
+        util:declare-option("exist:serialize", fn:concat(util:get-option("exist:serialize"), " ", "method=xhtml omit-xml-declaration=no media-type=text/html doctype-public=", $doctype-public, " doctype-system=", $doctype-system))
     else
-        util:declare-option("exist:serialize", fn:concat(util:get-option("exist:serialize"), " ", "media-type=text/html doctype-public=", $doctype-public, " doctype-system=", $doctype-system))
+        util:declare-option("exist:serialize", fn:concat("method=xhtml omit-xml-declaration=no media-type=text/html doctype-public=", $doctype-public, " doctype-system=", $doctype-system))
 };
 
 declare function impl:http-request-param-names() as xs:string*
@@ -115,13 +114,8 @@ declare function impl:version() as xs:string
 
 declare function impl:store($document-uri as xs:anyURI, $root as node()) as empty()
 {
-    (: 
     let $db-document-uri := impl:_uri_to_db_uri($document-uri) return
-        let $stored-uri := xmldb:store(impl:_collection-path-from-uri($db-document-uri), impl:_resource-path-from-uri($uri), root) return
-            ()
-    :)
-    
-    let $stored-uri := xmldb:store(impl:_collection-path-from-uri($document-uri), impl:_resource-path-from-uri($uri), root) return
+        let $stored-uri := xmldb:store(impl:_collection-path-from-uri($db-document-uri), impl:_resource-path-from-uri($db-document-uri), $root) return
             ()
 };
 
@@ -135,15 +129,12 @@ declare function impl:delete($document-uri as xs:anyURI) as empty()
     xmldb:remove($db-document-uri, impl:_resource-path-from-uri($uri))
 };
 
-declare function impl:doc-available($document-uri as xs:string?) as xs:boolean
+declare function impl:doc-available($document-uri as xs:anyURI?) as xs:boolean
 {
-    (:
-    fn:doc-available(impl:_uri_to_db_uri($document-uri))
-    :)
     fn:doc-available(impl:_uri_to_db_uri($document-uri))
 };
 
-declare function impl:doc($document-uri as xs:string?) as node()?
+declare function impl:doc($document-uri as xs:anyURI?) as node()?
 {
     (:
     fn:doc(impl:_uri_to_db_uri($document-uri))
@@ -151,7 +142,7 @@ declare function impl:doc($document-uri as xs:string?) as node()?
     fn:doc($document-uri)
 };
 
-declare function impl:directory($uri as xs:string) as document-node()*
+declare function impl:directory($uri as xs:anyURI) as document-node()*
 {
     (:
     collection(impl:_uri_to_db_uri($uri))
@@ -189,7 +180,7 @@ declare function impl:parse-with-fixes($unparsed as xs:string) as node()+
     util:parse-html($unparsed)
 };
 
-declare function impl:_uri_to_db_uri($document-uri as xs:string) as xs:string {
+declare function impl:_uri_to_db_uri($document-uri as xs:anyURI) as xs:string {
     
     let $db-document-uri :=
         if(fn:not(fn:starts-with($document-uri, $xqmvc-conf:app-root))) then
@@ -204,12 +195,12 @@ declare function impl:_uri_to_db_uri($document-uri as xs:string) as xs:string {
         $db-document-uri
 };
 
-declare function impl:_collection-path-from-uri($uri as xs:string) as xs:string
+declare function impl:_collection-path-from-uri($uri as xs:anyURI) as xs:string
 {
     replace($uri, "(.*)/.*", "$1")
 };
 
-declare function impl:_resource-path-from-uri($uri as xs:string) as xs:string
+declare function impl:_resource-path-from-uri($uri as xs:anyURI) as xs:string
 {
     replace($uri, ".*/", "")
 };

@@ -94,17 +94,17 @@ declare function impl:delete($document-uri as xs:anyURI) as empty()
     xdmp:document-delete($document-uri)
 };
 
-declare function impl:doc-available($document-uri as xs:string?) as xs:boolean
+declare function impl:doc-available($document-uri as xs:anyURI?) as xs:boolean
 {
     fn:doc-available($document-uri)
 };
 
-declare function impl:doc($document-uri as xs:string?) as node()?
+declare function impl:doc($document-uri as xs:anyURI?) as node()?
 {
     fn:doc($document-uri)
 };
 
-declare function impl:directory($uri as xs:string) as document()*
+declare function impl:directory($uri as xs:anyURI) as document()*
 {
     xdmp:directory($uri)
 };

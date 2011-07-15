@@ -86,17 +86,17 @@ declare function processor:delete($document-uri as xs:anyURI) as empty()
     impl:delete($document-uri)
 };
 
-declare function processor:doc-available($document-uri as xs:string?) as xs:boolean
+declare function processor:doc-available($document-uri as xs:anyURI?) as xs:boolean
 {
     impl:doc-available($document-uri)
 };
 
-declare function processor:doc($document-uri as xs:string?) as node()?
+declare function processor:doc($document-uri as xs:anyURI?) as node()?
 {
     impl:doc($document-uri)
 };
 
-declare function processor:directory($uri as xs:string) as document-node()*
+declare function processor:directory($uri as xs:anyURI) as document-node()*
 {
     impl:directory($uri)
 };
