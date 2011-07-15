@@ -23,9 +23,7 @@ as xs:string
     <form action="{ xqmvc:link('user', 'save') }" method="post">
         <table>
             {
-                for $field in map:get($data, 'user')/element()
-                where $field/@edit eq 'yes'
-                return
+                for $field in map:get($data, 'user')/child::element()[@edit eq "yes"] return
                     <tr>
                         <td>{ local:pretty(fn:name($field)) }</td>
                         <td>

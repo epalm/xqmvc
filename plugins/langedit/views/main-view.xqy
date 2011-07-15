@@ -68,17 +68,14 @@ declare variable $INPUT-MAX-SIZE as xs:integer := 50;
             <input type="hidden" name="filter" value="{ map:get($data, 'filter') }" />
             <input type="submit" value="save all" />{
             
-            let $categories := editor:category-list(map:get($data, 'lang'))
-            return
-                if (not($categories)) then
+            let $categories := editor:category-list(map:get($data, 'lang')) return
+                if(fn:not(fn:empty($categories)))then
                     <div class="novalues">
                         No values found.
                         Create one using dot-notation for hierarchy: 'cat.subcat.key'
                     </div>
                 else
-                    for $category in $categories
-                    order by $category
-                    return
+                    for $category in $categories order by $category return
                         let $values := editor:value-list(map:get($data, 'lang'), map:get($data, 'filter'))[$category eq editor:value-key-category(.)]
                         where exists($values)
                         return

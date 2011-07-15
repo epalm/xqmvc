@@ -17,9 +17,7 @@ declare variable $data as element(map) external;
             <th>Created</th>
         </tr>
         {
-            for $user in user:list()
-            order by $user/last-name
-            return
+            for $user in user:list() order by $user/last-name return
                 <tr>
                     <td>
                         <a href="{ xqmvc:link('user', 'view', ('id', $user/@id)) }">view</a>
@@ -27,10 +25,10 @@ declare variable $data as element(map) external;
                         <a href="{ xqmvc:link('user', 'delete', ('id', $user/@id)) }">delete</a>
                         &#160;
                     </td>
-                    <td>{ $user/email/text() }</td>
-                    <td>{ $user/first-name/text() }</td>
-                    <td>{ $user/last-name/text() }</td>
-                    <td>{ processor:format-dateTime-for-human(xs:dateTime($user/created/text())) }</td>
+                    <td>{ $user/child::element()[local-name(.) eq 'email']/text() }</td>
+                    <td>{ $user/child::element()[local-name(.) eq 'first-name']/text() }</td>
+                    <td>{ $user/child::element()[local-name(.) eq 'last-name']/text() }</td>
+                    <td>{ processor:format-dateTime-for-human(xs:dateTime($user/child::element()[local-name(.) eq 'created'])) }</td>
                 </tr>
         }
     </table>
