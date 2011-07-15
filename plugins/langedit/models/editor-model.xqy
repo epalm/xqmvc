@@ -32,7 +32,7 @@ declare variable $this:STRIP-CHARS as xs:string* := ('.', ' ');
 
 declare function this:lang-list() as xs:string*
 {
-    for $doc in processor:directory(concat($cfg:storage-dir, '/'))
+    for $doc in processor:directory(xs:anyURI(concat($cfg:storage-dir, '/')))
     let $filename := fn:base-uri($doc)
     let $lang := fn:replace(fn:tokenize($filename, '/')[last()], "(.*)\.xml", "$1")
     order by $lang
@@ -178,9 +178,9 @@ declare function this:category-list($lang as xs:string) as xs:string*
  : HELPER FUNCTIONS
  :)
 
-declare function this:path($lang as xs:string) as xs:string
+declare function this:path($lang as xs:string) as xs:anyURI
 {
-    fn:concat($cfg:storage-dir, '/', $cfg:file-prefix, $lang, '.xml')
+    xs:anyURI(fn:concat($cfg:storage-dir, '/', $cfg:file-prefix, $lang, '.xml'))
 };
 
 declare function this:filter($string as xs:string, $pattern as xs:string) as xs:string

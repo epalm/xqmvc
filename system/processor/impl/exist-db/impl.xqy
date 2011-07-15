@@ -4,12 +4,13 @@ module namespace impl = "http://scholarsportal.info/xqmvc/system/processor/impl/
 
 import module namespace xqmvc-conf = "http://scholarsportal.info/xqmvc/config" at "../../../../application/config/config.xqy";
 
-declare namespace datetime = "http://exist-db.org/xquery/datetime";
-declare namespace request = "http://exist-db.org/xquery/request";
-declare namespace response = "http://exist-db.org/xquery/response";
-declare namespace session = "http://exist-db.org/xquery/session";
-declare namespace system = "http://exist-db.org/xquery/system";
-declare namespace util = "http://exist-db.org/xquery/util";
+import module namespace datetime = "http://exist-db.org/xquery/datetime";
+import module namespace request = "http://exist-db.org/xquery/request";
+import module namespace response = "http://exist-db.org/xquery/response";
+import module namespace session = "http://exist-db.org/xquery/session";
+import module namespace system = "http://exist-db.org/xquery/system";
+import module namespace util = "http://exist-db.org/xquery/util";
+import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
 
 declare variable $impl:log-level as xs:string := "info";
 
@@ -31,12 +32,16 @@ declare function impl:execute-module-function($module-namespace as xs:anyURI, $c
          let $template := util:import-module($module-namespace, "pfx",
             xs:anyURI(fn:concat("xmldb:exist://", $controller-file))) return
     
+        (: TODO experiment with changing false() to true() below for caching :)
+    
        util:eval(fn:concat('pfx:', $function-name, '()'), false())
 };
 
 declare function impl:execute($view-file as xs:anyURI, $map as element(map)) {
 
     (: requires eXist 1.4.1+ :)
+    
+    (: TODO experiment with changing false() to true() below for caching :)
     
     util:eval($view-file,
         false(),
@@ -114,9 +119,24 @@ declare function impl:version() as xs:string
 
 declare function impl:store($document-uri as xs:anyURI, $root as node()) as empty()
 {
-    let $db-document-uri := impl:_uri_to_db_uri($document-uri) return
-        let $stored-uri := xmldb:store(impl:_collection-path-from-uri($db-document-uri), impl:_resource-path-from-uri($db-document-uri), $root) return
-            ()
+    let $db-document-uri := impl:_uri_to_db_uri($document-uri),
+    $db-collection-uri := impl:_collection-path-from-uri($db-document-uri) return
+        
+        let $null := impl:_create-collection-path($db-collection-uri) return
+            let $stored-uri := xmldb:store($db-collection-uri, impl:_resource-path-from-uri($db-document-uri), $root) return
+                ()
+};
+
+(: creates the collection path if it doesnt exist :)
+declare function impl:_create-collection-path($path as xs:string) {
+	let $segments := tokenize($path, "/") return
+		for $i in 3 to count($segments)
+		let $parent-collection := fn:concat("/", string-join($segments[position() = (2 to $i - 1)], "/"))
+		let $collection-name := $segments[$i] return
+            if(xmldb:collection-available(fn:concat($parent-collection, "/", $collection-name)))then
+                ()
+            else
+                xmldb:create-collection($parent-collection, $collection-name)
 };
 
 declare function impl:delete($document-uri as xs:anyURI) as empty()
@@ -141,10 +161,7 @@ declare function impl:doc($document-uri as xs:anyURI?) as node()?
 
 declare function impl:directory($uri as xs:anyURI) as document-node()*
 {
-    (:
-    collection(impl:_uri_to_db_uri($uri))
-    :)
-    collection($uri)
+    fn:collection(impl:_uri_to_db_uri($uri))
 };
 
 declare function impl:random() as xs:integer
