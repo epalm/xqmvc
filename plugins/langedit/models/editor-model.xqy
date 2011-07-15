@@ -109,9 +109,8 @@ declare function this:value-list($lang as xs:string, $filter as xs:string?) as e
         if (fn:not($filter)) then
             $values
         else
-            for $value in $values
-            where fn:matches($value/@key, $filter)
-            return $value 
+            for $value in $values[fn:matches($key, $filter)] return
+                $value 
 };
 
 declare function this:value-update($lang as xs:string, $id as xs:string, $key as xs:string, $text as xs:string)
