@@ -210,9 +210,15 @@ declare function this:value-key-name($value as element(le:value)) as xs:string
 declare function this:key-category($key as xs:string) as xs:string
 {
     let $parts := fn:tokenize($key, '\.')
-    let $category := fn:string-join($parts[1 to last() - 1], '.')
+    
+    let $category := fn:string-join(
+        for $i in 1 to count($parts) -1 return
+            $parts[$i]
+        ,
+        "."
+    )
     return
-        if ($category) then $category else ''
+        if(fn:not(fn:empty($category))) then $category else ''
 };
 
 declare function this:key-name($key as xs:string) as xs:string
