@@ -24,6 +24,10 @@ declare function processor:execute($view-file as xs:anyURI, $map as element(map)
     impl:execute($view-file, $map)
 };
 
+declare function processor:eval-with-current-context($expression as xs:string?) {
+    impl:eval-with-current-context($expression)
+};
+
 declare function processor:http-response-redirect($location as xs:anyURI) as empty() {
     impl:http-response-redirect($location)
 };
@@ -161,4 +165,12 @@ declare function processor:get-server-base-uri() as xs:anyURI {
 :)
 declare function processor:http-post($uri as xs:anyURI, $options as element(options)?) as item()+ {
     impl:http-post($uri, $options)
+};
+
+declare function processor:node-uri($node as node()) as xs:string? {
+    impl:node-uri($node)
+};
+
+declare function processor:doc-last-modified($document-uri as xs:anyURI) as xs:dateTime {
+    impl:doc-last-modified($document-uri)
 };

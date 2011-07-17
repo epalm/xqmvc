@@ -50,6 +50,10 @@ declare function impl:execute($view-file as xs:anyURI, $map as element(map)) {
     )
 };
 
+declare function impl:eval-with-current-context($expression as xs:string?) {
+    util:eval($expression)
+};
+
 declare function impl:http-response-redirect($location as xs:anyURI) as empty()
 {
     response:redirect-to($location)
@@ -261,4 +265,13 @@ declare function processor:http-post($uri as xs:anyURI, $options as element(opti
     } return
     
         http:send-request($request)
+};
+
+declare function impl:node-uri($node as node()) as xs:string? {
+    fn:document-uri(fn:root($node))
+};
+
+declare function impl:doc-last-modified($document-uri as xs:anyURI) as xs:dateTime {
+    let $db-document-uri := impl:_uri_to_db_uri($document-uri) return
+        xmldb:last-modified(impl:_collection-path-from-uri($db-document-uri), impl:_resource-path-from-uri($db-document-uri))
 };

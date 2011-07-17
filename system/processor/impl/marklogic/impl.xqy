@@ -31,6 +31,10 @@ declare function impl:execute($view-file as xs:anyURI, $map as element(map)) {
     )
 };
 
+declare function impl:eval-with-current-context($expression as xs:string?) {
+    xdmp:value($expression)
+};
+
 declare function impl:http-response-redirect($location as xs:anyURI) as empty()
 {
     xdmp:redirect-response($location)
@@ -158,6 +162,14 @@ declare function impl:get-server-base-uri() as xs:anyURI {
 
 declare function impl:http-post($uri as xs:anyURI, $options as element(options)?) as item()+ {
      xdmp:http-post($uri, _impl:move-to-namespace($options, "xdmp:http"))
+};
+
+declare function impl:node-uri($node as node()) as xs:string? {
+    xdmp:node-uri($node)
+};
+
+declare function impl:doc-last-modified($document-uri as xs:anyURI) as xs:dateTime {
+    xdmp:document-properties($document-uri)/prop:properties/prop:last-modified
 };
 
 declare function _impl:move-to-namespace($element as element(), $namespace as xs:string) {
