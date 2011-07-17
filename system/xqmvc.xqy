@@ -52,11 +52,9 @@ declare variable $xqmvc:doctype-xhtml-1.1 :=              '<!DOCTYPE html PUBLIC
 declare function xqmvc:_controller($controller-file as xs:string, $function as xs:string) as item()*
 {
     if(fn:starts-with($function, '_')) then
-    ()
+        ()
     else
-    (
         processor:execute-module-function(xqmvc:get-namespace-for-prefix("xqmvc-ctrlr"), xs:anyURI($controller-file), $function)
-    )
 };
 
 declare function xqmvc:get-namespace-for-prefix($prefix as xs:string) as xs:anyURI?
@@ -134,8 +132,7 @@ declare function xqmvc:template($template as xs:string) as item()*
 
 declare function xqmvc:plugin-template($plugin as xs:string, $template as xs:string, $pairs as item()*) as item()*
 {
-    let $template-file := fn:concat($xqmvc:plugin-dir, '/', $plugin, '/templates/', $template, '.xqy')
-    return
+    let $template-file := fn:concat($xqmvc:plugin-dir, '/', $plugin, '/templates/', $template, '.xqy') return
         xqmvc:_template($template-file, $pairs)
 };
 
@@ -214,11 +211,11 @@ declare function xqmvc:plugin-link($plugin as xs:string, $controller as xs:strin
  :)
 declare function xqmvc:_formlink($plugin as xs:string?, $controller as xs:string, $function as xs:string) as item()*
 {
-    if ($xqmvc-conf:url-rewrite) then (
+    if($xqmvc-conf:url-rewrite)then
     
         attribute action { xqmvc:_link($plugin, $controller, $function, ()) }
         
-    ) else (
+    else(
         
         attribute action { '?' },
         
@@ -233,15 +230,14 @@ declare function xqmvc:_formlink($plugin as xs:string?, $controller as xs:string
                 attribute name { $xqmvc-conf:function-querystring-field },
                 attribute value { $function }
             },
-            if ($plugin) then
+            if($plugin)then
                 element input {
                     attribute type { 'hidden' },
                     attribute name { $xqmvc-conf:plugin-querystring-field },
                     attribute value { $plugin }
                 }
-            else ()
+            else()
         }</div>
-        
     )
 };
 
@@ -275,10 +271,10 @@ declare function xqmvc:redirect($location as xs:string) as empty-sequence()
 declare function xqmvc:querystring-join($pairs as item()*) as xs:string
 {
     fn:string-join(
-        for $i in (1 to fn:count($pairs))[. mod 2 ne 0]
-          return fn:concat(fn:string($pairs[$i]), '=', fn:string($pairs[$i+1])),
-          '&amp;'
-      )
+        for $i in (1 to fn:count($pairs))[. mod 2 ne 0] return
+            fn:concat(fn:string($pairs[$i]), '=', fn:string($pairs[$i+1])),
+      '&amp;'
+    )
 };
 
 (:~
@@ -289,9 +285,9 @@ declare function xqmvc:querystring-join($pairs as item()*) as xs:string
 declare function xqmvc:querystring-split($querystring as xs:string*) as xs:string*
 {
     for $pair in fn:tokenize($querystring, '&amp;')
-        let $key-value := fn:tokenize($pair, '=')
-        return
-            ($key-value[1], $key-value[2])
+    let $key-value := fn:tokenize($pair, '=') return
+        
+        ($key-value[1], $key-value[2])
 };
 
 (:~
@@ -331,9 +327,11 @@ declare function xqmvc:apply-namespace($node as node(), $namespace as xs:string)
         case element() return
             element { fn:QName($namespace, fn:name($node)) } {
                 $node/@*,
-                for $n in $node/node() return xqmvc:apply-namespace($n, $namespace)
+                for $n in $node/node() return
+                    xqmvc:apply-namespace($n, $namespace)
             }
-        default return $node
+        default return
+            $node
 };
 
 (:~
