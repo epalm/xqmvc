@@ -49,7 +49,7 @@ declare variable $this:file-prefix as xs:string := '';
  : http session field is useful here.
  :
  : eg: 'en'
- : eg: processor:http-sessionp-param('lang', 'en')
+ : eg: processor:http-session-param('lang', 'en')
  :)
 declare variable $this:default-lang as xs:string := 'en';
 
