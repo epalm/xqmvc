@@ -141,12 +141,8 @@ declare function impl:_create-collection-path($path as xs:string) {
 
 declare function impl:delete($document-uri as xs:anyURI) as empty()
 {
-    (:
     let $db-document-uri := impl:_uri_to_db_uri($document-uri) return
-        xmldb:remove(impl:_collection-path-from-uri($db-document-uri), impl:_resource-path-from-uri($uri))
-    :)
-    
-    xmldb:remove($db-document-uri, impl:_resource-path-from-uri($uri))
+        xmldb:remove(impl:_collection-path-from-uri($db-document-uri), impl:_resource-path-from-uri($db-document-uri))
 };
 
 declare function impl:doc-available($document-uri as xs:anyURI?) as xs:boolean
