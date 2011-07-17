@@ -109,7 +109,7 @@ declare function impl:directory($uri as xs:anyURI) as document()*
     xdmp:directory($uri)
 };
 
-declare function impl:random() as xs:integer
+declare function impl:random() as xs:unsignedLong
 {
     xdmp:random()
 };

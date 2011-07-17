@@ -46,10 +46,9 @@ declare function this:lang-exists($lang as xs:string) as xs:boolean
 
 declare function this:lang-create($lang as xs:string) as empty-sequence()
 {
-    let $lang := this:filter(this:strip($lang, $this:STRIP-CHARS), 
-        $this:LANG-CHAR-PATTERN)
-    return
-        if (fn:not($lang) or this:lang-exists($lang)) then ()
+    let $lang := this:filter(this:strip($lang, $this:STRIP-CHARS), $this:LANG-CHAR-PATTERN) return
+        if(fn:not($lang) or this:lang-exists($lang)) then
+        ()
         else
             let $new-lang := 
                 <le:lang xmlns:le="http://scholarsportal.info/xqmvc/langedit">{
@@ -108,14 +107,15 @@ declare function this:value-list($lang as xs:string, $filter as xs:string?) as e
     return
         if (fn:not($filter)) then
             $values
-        else
-            for $value in $values[fn:matches($key, $filter)] return
-                $value 
+        else 
+            for $value in $values[fn:matches(@key, $filter)] return
+                $value
 };
 
 declare function this:value-update($lang as xs:string, $id as xs:string, $key as xs:string, $text as xs:string)
 {
-    if (fn:not(this:value-exists($id))) then ()
+    if (fn:not(this:value-exists($id)))then
+        ()
     else
         let $key := this:filter(this:strip($key, $this:STRIP-CHARS), 
             $this:KEY-CHAR-PATTERN)

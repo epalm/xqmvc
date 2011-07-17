@@ -164,9 +164,9 @@ declare function impl:directory($uri as xs:anyURI) as document-node()*
     fn:collection(impl:_uri_to_db_uri($uri))
 };
 
-declare function impl:random() as xs:integer
+declare function impl:random() as xs:unsignedLong
 {
-    util:random()
+    util:random-ulong()
 };
 
 declare function impl:node-insert-child($node as node(), $child as node()) as empty()

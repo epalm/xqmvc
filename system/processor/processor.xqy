@@ -101,7 +101,7 @@ declare function processor:directory($uri as xs:anyURI) as document-node()*
     impl:directory($uri)
 };
 
-declare function processor:random() as xs:integer
+declare function processor:random() as xs:unsignedLong
 {
     impl:random()
 };
