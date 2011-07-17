@@ -258,7 +258,7 @@ declare function processor:http-post($uri as xs:anyURI, $options as element(opti
         element http:body {
             $options/data/node()
         }
-    }
+    } return
     
-    http:send-request($request)
+        http:send-request($request)
 };
