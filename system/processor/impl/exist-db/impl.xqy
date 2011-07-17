@@ -12,6 +12,8 @@ import module namespace system = "http://exist-db.org/xquery/system";
 import module namespace util = "http://exist-db.org/xquery/util";
 import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
 
+import module namespace http = "http://exist-db.org/xquery/httpclient";
+
 declare variable $impl:log-level as xs:string := "info";
 
 declare function impl:execute-module-function($module-namespace as xs:anyURI, $controller-file as xs:anyURI, $function-name as xs:string) as item()* {
@@ -28,11 +30,10 @@ declare function impl:execute-module-function($module-namespace as xs:anyURI, $c
             fn:concat($import-declaration, $function-call)
         )
     :)
+        (: TODO experiment with changing false() to true() below for caching :)
         
          let $template := util:import-module($module-namespace, "pfx",
             xs:anyURI(fn:concat("xmldb:exist://", $controller-file))) return
-    
-        (: TODO experiment with changing false() to true() below for caching :)
     
        util:eval(fn:concat('pfx:', $function-name, '()'), false())
 };
@@ -59,6 +60,11 @@ declare function impl:http-response-content-type($content-type as xs:string) as 
         util:declare-option("exist:serialize", fn:concat(util:get-option("exist:serialize"), " ", "method=xhtml omit-xml-declaration=no media-type=", $content-type))
     else
         util:declare-option("exist:serialize", fn:concat("method=xhtml omit-xml-declaration=no media-type=", $content-type))
+};
+
+declare function impl:http-response-code($code as xs:integer, $message as xs:string) as empty() {
+    response:set-status-code($code)
+    (: todo what to do with $message? :)
 };
 
 declare function impl:response-set-document-type($doctype as xs:string) {
@@ -155,6 +161,11 @@ declare function impl:doc($document-uri as xs:anyURI?) as node()?
     fn:doc(impl:_uri_to_db_uri($document-uri))
 };
 
+declare function impl:collection($collection-uri as xs:anyURI?) as node()*
+{
+    fn:collection(impl:_uri_to_db_uri($collection-uri))
+};
+
 declare function impl:directory($uri as xs:anyURI) as document-node()*
 {
     fn:collection(impl:_uri_to_db_uri($uri))
@@ -190,6 +201,10 @@ declare function impl:parse-with-fixes($unparsed as xs:string) as node()+
     util:parse-html($unparsed)
 };
 
+declare function impl:serialize($node) as xs:string {
+    util:serialize($node, ())
+};
+
 declare function impl:_uri_to_db_uri($document-uri as xs:anyURI) as xs:string {
     
     let $db-document-uri :=
@@ -217,4 +232,33 @@ declare function impl:_resource-path-from-uri($uri as xs:anyURI) as xs:string
 
 declare function impl:get-server-base-uri() as xs:anyURI {
     xs:anyURI(substring-before(request:get-uri(), "/db/"))
+};
+
+declare function processor:http-post($uri as xs:anyURI, $options as element(options)?) as item()+ {
+    
+    let $request := element http:request {
+        attribute href { $uri },
+        attribute method { "post" },
+        
+        if(fn:not(fn:empty($options/authentication)))then (
+            attribute send-authorization { true() },
+            attribute auth-method { $options/authentication/@method },
+            attribute username { $options/authentication/username },
+            attribute password { $options/authentication/password }
+        ) else(),
+        
+        if(fn:not(fn:empty($options/headers)))then (
+            for $header in $options/headers/element() return
+                element http:header {
+                    attribute name { local-name($header) },
+                    attribute value { $header/text() }
+                }
+        ) else(),
+        
+        element http:body {
+            $options/data/node()
+        }
+    }
+    
+    http:send-request($request)
 };

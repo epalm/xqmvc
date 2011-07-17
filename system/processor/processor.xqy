@@ -32,6 +32,10 @@ declare function processor:http-response-content-type($content-type as xs:string
     impl:http-response-content-type($content-type)
 };
 
+declare function processor:http-response-code($code as xs:integer, $message as xs:string) as empty() {
+    impl:http-response-code($code, $message)
+};
+
 declare function processor:response-set-document-type($doctype as xs:string) {
     impl:response-set-document-type($doctype)
 };
@@ -96,6 +100,11 @@ declare function processor:doc($document-uri as xs:anyURI?) as node()?
     impl:doc($document-uri)
 };
 
+declare function processor:collection($collection-uri as xs:anyURI?) as node()*
+{
+    impl:collection($collection-uri)
+};
+
 declare function processor:directory($uri as xs:anyURI) as document-node()*
 {
     impl:directory($uri)
@@ -130,6 +139,26 @@ declare function processor:parse-with-fixes($unparsed as xs:string) as node()+ {
     impl:parse-with-fixes($unparsed)
 };
 
+declare function processor:serialize($node) as xs:string {
+    impl:serialize($node)
+};
+
 declare function processor:get-server-base-uri() as xs:anyURI {
     impl:get-server-base-uri()
+};
+
+(:~
+: @options
+:   <options>
+:       <data/>
+:       <headers/>
+:       <authentication method="basic">
+:           <username>myname</username>
+:           <password>mypassword</password>
+:       </authentication>
+:       <timeout/>
+:   </options>
+:)
+declare function processor:http-post($uri as xs:anyURI, $options as element(options)?) as item()+ {
+    impl:http-post($uri, $options)
 };

@@ -40,6 +40,10 @@ declare function impl:http-response-content-type($content-type as xs:string) as 
     xdmp:set-response-content-type($content-type)
 };
 
+declare function impl:http-response-code($code as xs:integer, $message as xs:string) as empty() {
+    xdmp:set-response-code($code, $message)
+};
+
 declare function impl:response-set-document-type($doctype as xs:string) {
     $doctype
 };
@@ -104,6 +108,11 @@ declare function impl:doc($document-uri as xs:anyURI?) as node()?
     fn:doc($document-uri)
 };
 
+declare function impl:collection($collection-uri as xs:anyURI?) as node()*
+{
+    fn:collection($collection-uri)
+};
+
 declare function impl:directory($uri as xs:anyURI) as document()*
 {
     xdmp:directory($uri)
@@ -139,6 +148,25 @@ declare function impl:parse-with-fixes($unparsed as xs:string) as node()+
     xdmp:unquote($unparsed, "", "repair-full")
 };
 
+declare function impl:serialize($node) as xs:string {
+    xdmp:quote($node)
+};
+
 declare function impl:get-server-base-uri() as xs:anyURI {
     xs:anyURI()
+};
+
+declare function impl:http-post($uri as xs:anyURI, $options as element(options)?) as item()+ {
+     xdmp:http-post($uri, _impl:move-to-namespace($options, "xdmp:http"))
+};
+
+declare function _impl:move-to-namespace($element as element(), $namespace as xs:string) {
+  element { QName($namespace, local-name($element)) } {
+    $element/@*,
+    for $child in $element/node() return
+        if($child instance of element()) then
+            impl:_move-to-namespace($child, $namespace)
+        else
+            $child
+    }
 };
