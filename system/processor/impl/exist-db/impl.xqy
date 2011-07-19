@@ -273,7 +273,7 @@ declare function impl:node-uri($node as node()) as xs:string? {
 
 declare function impl:collection-match($collection-name-wildcard-pattern as xs:string) as xs:string* {
     let $db-collection := impl:_uri_to_db_uri(xs:anyURI($collection-name-wildcard-pattern)) return
-        for $collection-name in xmldb:match-collection(fn:replace($collection-name, "*", ".*")) return
+        for $collection-name in xmldb:match-collection(fn:replace($db-collection, "*", ".*")) return
             impl:_resource-path-from-uri($collection-name)
 };
 
