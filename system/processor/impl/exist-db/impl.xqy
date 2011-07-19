@@ -12,7 +12,7 @@ import module namespace system = "http://exist-db.org/xquery/system";
 import module namespace util = "http://exist-db.org/xquery/util";
 import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
 
-import module namespace http = "http://exist-db.org/xquery/httpclient";
+import module namespace http = "http://expath.org/ns/http-client";
 
 declare variable $impl:log-level as xs:string := "info";
 
@@ -238,7 +238,7 @@ declare function impl:get-server-base-uri() as xs:anyURI {
     xs:anyURI(substring-before(request:get-uri(), "/db/"))
 };
 
-declare function processor:http-post($uri as xs:anyURI, $options as element(options)?) as item()+ {
+declare function impl:http-post($uri as xs:anyURI, $options as element(options)?) as item()+ {
     
     let $request := element http:request {
         attribute href { $uri },
