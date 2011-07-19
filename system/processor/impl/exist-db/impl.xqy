@@ -271,6 +271,12 @@ declare function impl:node-uri($node as node()) as xs:string? {
     fn:document-uri(fn:root($node))
 };
 
+declare function impl:collection-match($collection-name-wildcard-pattern as xs:string) as xs:string* {
+    let $db-collection := impl:_uri_to_db_uri(xs:anyURI($collection-name-wildcard-pattern)) return
+        for $collection-name in xmldb:match-collection(fn:replace($collection-name, "*", ".*")) return
+            impl:_resource-path-from-uri($collection-name)
+};
+
 declare function impl:doc-last-modified($document-uri as xs:anyURI) as xs:dateTime {
     let $db-document-uri := impl:_uri_to_db_uri($document-uri) return
         xmldb:last-modified(impl:_collection-path-from-uri($db-document-uri), impl:_resource-path-from-uri($db-document-uri))

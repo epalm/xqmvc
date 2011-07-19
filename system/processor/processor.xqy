@@ -171,6 +171,11 @@ declare function processor:node-uri($node as node()) as xs:string? {
     impl:node-uri($node)
 };
 
+(: similar to cts:collection-match :)
+declare function processor:collection-match($collection-name-wildcard-pattern as xs:string) as xs:string* {
+    impl:collection-match($collection-name-wildcard-pattern)
+};
+
 declare function processor:doc-last-modified($document-uri as xs:anyURI) as xs:dateTime {
     impl:doc-last-modified($document-uri)
 };

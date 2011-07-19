@@ -168,6 +168,10 @@ declare function impl:node-uri($node as node()) as xs:string? {
     xdmp:node-uri($node)
 };
 
+declare function impl:collection-match($collection-name-wildcard-pattern as xs:string) as xs:string* {
+    cts:collection-match($collection-name-wildcard-pattern)
+};
+
 declare function impl:doc-last-modified($document-uri as xs:anyURI) as xs:dateTime {
     xdmp:document-properties($document-uri)/prop:properties/prop:last-modified
 };
