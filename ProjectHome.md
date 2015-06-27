@@ -1,0 +1,7 @@
+MVC is a design pattern which promotes organization of code and file structure by separating presentation from domain logic.  While there are dozens of MVC frameworks for languages such as Java, Python, PHP, Ruby, etc, nothing similar exists for developers building complex applications in XQuery.
+
+XQMVC is a new XQuery web application framework which leverages MVC design principles as well as new capabilities made available in MarkLogic Server 4.1 to offer the foundation for a clean and well-organized XQuery-driven website.  Highlights include friendly URLs, nestable templates (allowing visual sections of a site to be encapsulated in reusable XHTML fragments), and a simple but effective i18n engine (to externalize and manage text fragments using a web-based editor).
+
+To get started, read the [Introduction](Introduction.md) page, followed by the InstallationConfiguration page.
+
+I usually idle in #xqmvc on irc.freenode.net, if you'd like to chat.  Here's a direct link that most irc clients will pick up if you execute it in a browser:  [irc://irc.freenode.net/#xqmvc](irc://irc.freenode.net/#xqmvc).  If you don't have an irc client at your disposal, you can use http://mibbit.com/chat.  Simply select Freenode from the dropdown list, type the nickname you wish to use, and type #xqmvc as the channel you wish to join.
